@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useStore, RootStoreContext } from "./shared/UseStore";
+import { RootStore, Task} from "./stores/Root.Store";
+import TaskList from "./components/TaskList";
+import {useState} from "react";
 
-function App() {
+const App = () => {
+    const [tasks, setTasks] = useState<Task[]>([
+        {
+            title: "Задание 1",
+        },
+        {
+            title: "Задание 2",
+            subtasks: [
+                {
+                    title: "Подзадание 2.1",
+                },
+            ],
+        },
+    ]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <RootStoreContext.Provider value={new RootStore()}>
+        <TaskList tasks={tasks}/>
+      </RootStoreContext.Provider>
   );
-}
+};
 
 export default App;
