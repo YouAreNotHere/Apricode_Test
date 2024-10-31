@@ -36,3 +36,111 @@
     transform: rotate(360deg);
   }
 }
+.Create-task-button{
+  width: 20px;
+  height: 20px;
+  position: relative;
+  opacity: 0;
+}
+
+.close-icon::before,
+.close-icon::after,
+.create-icon::before,
+.create-icon::after{
+  content: "";
+  position: absolute;
+  left: -2px;
+  top: 8px;
+  width: 24px;
+  height: 4px;
+  background: black;
+}
+
+.close-icon::before {
+  /*width: 1px; !* Толщина горизонтальной линии *!*/
+  /*height: 20px; !* Высота линии *!*/
+  /*left: 50%; !* Центрирование по горизонтали *!*/
+  transform: rotate(45deg); /* Смещение влево на половину ширины */
+}
+
+.close-icon::after {
+  /*width: 20px; !* Длина вертикальной линии *!*/
+  /*height: 1px; !* Толщина вертикальной линии *!*/
+  /*top: 5px; !* Центрирование по вертикали *!*/
+  transform: rotate(-45deg); /* Смещение вверх на половину высоты */
+}
+
+.create-icon::after{
+  transform: rotate(-45deg);
+}
+
+.create-icon::after{
+  transform: rotate(90deg);
+}
+
+.create-icon::before{
+  transform: rotate(180deg);
+}
+
+
+.Button-Bar{
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+  width: 20%;
+}
+
+.button-container {
+  position: relative; /* Устанавливаем контекст для абсолютного позиционирования */
+}
+
+.main-task-button{
+  width: 200px;
+  height: 50px;
+  margin: 50px;
+}
+
+.numbered {
+  list-style-type: none; /* Убираем стандартные точки */
+  counter-reset: list-counter; /* Инициализация счетчика */
+}
+
+.numbered li {
+  counter-increment: list-counter; /* Увеличение счетчика для каждого элемента */
+  position: relative; /* Позволяет позиционировать элемент относительно себя */
+}
+
+.numbered li::before {
+  content: counter(list-counter) ". "; /* Выводим номер перед пунктом */
+  position: absolute; /* Абсолютное позиционирование для номера */
+  left: -1.5em; /* Рекомендуется настроить смещение */
+}
+
+.suggest-task-button {
+  position: relative;
+  width: 50px;
+  height: 50px;
+  background-color: #4caf50; /* Цвет кнопки */
+  border-radius: 5px; /* Закругление углов */
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+}
+
+.suggest-task-button {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 24px; /* Ширина галочки */
+  height: 24px; /* Высота галочки */
+  background-color: transparent; /* Прозрачный фон */
+  border-width: 0 4px 4px 0; /* Изменяем ширину границы для создания галочки */
+  transform: translate(-50%, -50%) rotate(45deg); /* Центрируем и поворачиваем */
+  opacity: 1; /* Скрываем галочку по умолчанию */
+  transition: opacity 0.2s; /* Плавный переход при появлении */
+}
+
+.suggest-task-button:hover .checkmark {
+  opacity: 1; /* Показываем галочку при наведении */
+}

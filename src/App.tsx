@@ -1,27 +1,24 @@
 import { useStore, RootStoreContext } from "./shared/UseStore";
-import { RootStore, Task} from "./stores/Root.Store";
+import { RootStore, Task, taskStore} from "./stores/Root.Store";
 import TaskList from "./components/TaskList";
-import {useState} from "react";
+import {AddTask} from "./components/AddTask";
+import {showAddTask} from "./stores/Root.Store";
+import {observer} from "mobx-react-lite";
+import Button from "./shared/Button";
 
-const App = () => {
-    const [tasks, setTasks] = useState<Task[]>([
-        {
-            title: "Задание 1",
-        },
-        {
-            title: "Задание 2",
-            subtasks: [
-                {
-                    title: "Подзадание 2.1",
-                },
-            ],
-        },
-    ]);
-  return (
-      <RootStoreContext.Provider value={new RootStore()}>
-        <TaskList tasks={tasks}/>
-      </RootStoreContext.Provider>
-  );
-};
+const App = observer(() => {
+
+
+    return (
+        <>
+            <TaskList tasks={taskStore.tasks}/>
+            <Button
+                buttonName={"main-task-button"}
+                text={"Добавь своё первое задание!"}
+                onClickHandler={()=> showAddTask.changeParentIdToAdd(taskStore.tasks.length - 1)}/>
+            {/*<AddTask/>*/}
+        </>
+    );
+}) ;
 
 export default App;
