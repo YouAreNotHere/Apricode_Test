@@ -1,7 +1,6 @@
-import React, { useContext, createContext } from "react";
+import React, { useContext, createContext, useRef } from "react";
 import { observer } from "mobx-react-lite";
 import {Task} from "../stores/Root.Store";
-import {useStore} from "../shared/UseStore";
 import TaskList from "./TaskList";
 import {taskStore} from "../stores/Root.Store";
 import Button from "../shared/Button";
@@ -15,20 +14,28 @@ type Props = {
 
 const TaskItem: any= ({ task }: any) => {
     let ButtonBar: any;
-    if (!showAddTask.isShow){
+    const childNumber = useRef(1);
+    const childId = task.id + "+" + childNumber.current++;
+    if (showAddTask.idToAdd !== task.id) {
         ButtonBar = (<div className={"Button-Bar"}>
-            <div>{task.title}</div>
-            <div className={"button-container"} title={"Удалить задание"}>
-                <Button buttonName={"Create-task-button"} onClickHandler={() => showAddTask.change()}/>
-                <span className="close-icon"></span>
-            </div>
-            <div className={"button-container"} title={"Добавить задание"}>
-                <Button buttonName={"Create-task-button"} onClickHandler={() => {showAddTask.change(); console.log("Create")}}/>
-                <span className="create-icon"></span>
+            <div className={"task-title"}>{task.title}</div>
+            <div className={"button-wrapper"}>
+                <div className={"button-container"} title={"Добавить задание"}>
+                    <Button buttonName={"Create-task-button"}
+                            onClickHandler={() => showAddTask.changeIdToAdd({id: task.id})}>
+                        <span className="create-icon"></span>
+                    </Button>
+                </div>
+                <div className={"button-container"} title={"Удалить задание"}>
+                    <Button buttonName={"Create-task-button"}
+                            onClickHandler={() => taskStore.removeTask({id: task.id})}>
+                        <span className="delete-icon"></span>
+                    </Button>
+                </div>
             </div>
         </div>);
     } else {
-        ButtonBar = <AddTask/>
+        ButtonBar = <AddTask id={childId} parentId={task.id}/>
     }
     if (task) {
         return (

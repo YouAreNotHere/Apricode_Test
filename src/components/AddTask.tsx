@@ -4,22 +4,42 @@ import {observer} from "mobx-react-lite";
 import {taskStore, showAddTask} from "../stores/Root.Store";
 import Button from "../shared/Button";
 import "../App.css"
+import taskList from "./TaskList";
 
-export const AddTask = observer(() => {
+export const AddTask = observer(({id, parentId}: {id:number | string, parentId: number | null}) => {
     const [text, setText] = useState('');
     let isFirst = taskStore.tasks.length === 0;
 
-    const onClickHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        taskStore.addTask({title: text});
-        console.log("Добавили таску");
+    const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
+        taskStore.addTask({title: text, id: id, parentId: parentId, subtasks: []});
+        if (parentId === null) taskStore.increaseRootId();
+        // title: "Задание";
+        // text: text;
+        // id: number,
+        //     isFocus: boolean,
+        //     parentId?: number,
+        //     subtasks?: Task[];});
         setText("");
-        showAddTask.change();
+        showAddTask.changeIdToAdd({idToAdd: undefined});
     };
 
+    const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+        showAddTask.changeIdToAdd({idToAdd: undefined});
+    }
+
     return (
-        <>
+        <div className={"add-task-input"}>
             <input onChange={(e) => setText(e.target.value)} value={text} />
-            <Button onClickHandler={onClickHandler} buttonName={"suggest-task-button"}/>
-        </>
+            <div className={"button-container"} title={"Добавить выбранное задание"}>
+                <Button onClickHandler={onClickSuggestHandler} buttonName={"suggest-task-button"}>
+                    <span className="create-icon"></span>
+                </Button>
+            </div>
+            <div className={"button-container"} title={"Отменить добавление задания"}>
+                <Button onClickHandler={onClickCancelHandler} buttonName={"cancel-task-button"}/>
+                <span className="delete-icon"></span>
+            </div>
+
+        </div>
     );
-}) ;
+});

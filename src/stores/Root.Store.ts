@@ -6,27 +6,45 @@ export interface Task {
     id: number,
     isFocus: boolean,
     parentId?: number,
-    subtasks?: Task[];
+    subtasks?: any;
 }
 
 class TaskStore {
     tasks: Task[] = [];
+    rootId: number = 0;
 
     constructor() {
         makeAutoObservable(this);
     }
 
+
     addTask(task: Task) {
+        //const childId = `${this.id}${this.children.length + 1}`;
         this.tasks = [...this.tasks, task];
-        console.log(this.tasks);
+        console.log(task.parentId);
+        if (task.parentId){
+            const parent: any = this.tasks.filter((storeTask) => storeTask.id === task.parentId);
+            console.log(parent);
+            if (parent !==undefined) parent.subtasks.push(task.id);
+        }
+        //this.currentId++
+        console.log(this.tasks)
     }
 
+    increaseRootId(taskId: number) {
+        this.rootId++;
+    }
 
-    removeTask(index: number) {
+    removeTask(index: {id: number}) {
         const newTasks = [...this.tasks];
-        newTasks.splice(index, 1);
+        newTasks.splice(index.id, 1);
         this.tasks = newTasks;
     }
+
+    // addChild({parentId, childId}: {parentId: number, childId: number}) {
+    //
+    //     this.children.push(newChild);
+    // }
 
     updateTask(index: number, task: Task) {
         Object.assign(this.tasks[index], task);
@@ -38,11 +56,10 @@ class ShowAddTask{
         makeAutoObservable(this);
     }
 
-    parentIdToAdd: number | null | undefined;
+    idToAdd: number | undefined | string;
 
-    changeParentIdToAdd = ({parentId}: {parentId: number | null}) => {
-        console.log(this.parentIdToAdd);
-        this.parentIdToAdd = parentId;
+    changeIdToAdd = ({id}: {id: number | undefined | string}) => {
+        this.idToAdd = id;
     }
 }
 

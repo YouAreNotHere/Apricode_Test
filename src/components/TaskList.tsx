@@ -15,13 +15,13 @@ const TaskList: React.FC<{ tasks?: Task[]  }> = observer(({tasks}) => {
         )
     }
         return (
-            <ol className={"numbered"}>
+            <ul className={"numbered"}>
                 {tasks.map((task: any, index: any) => (
                     <li key={index}>
                         <TaskItem task={task} />
                     </li>
                 ))}
-            </ol>
+            </ul>
         );
 
 
