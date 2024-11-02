@@ -6,9 +6,12 @@ import {observer} from "mobx-react-lite";
 import Button from "./shared/Button";
 
 const App = observer(() => {
-    const {tasks, rootId} = taskStore;
+    let {tasks, rootId, Task} = taskStore;
     const {idToAdd, changeIdToAdd} = showAddTask;
     let appContent;
+    tasks = tasks.filter((storeTask: Task) => typeof storeTask.id === "number");
+    console.log(tasks);
+
     if (idToAdd === -1){
         appContent = (
             <>
@@ -23,7 +26,7 @@ const App = observer(() => {
                 <Button
                     buttonName={"main-task-button"}
                     text={"Добавь своё первое задание!"}
-                    onClickHandler={()=> changeIdToAdd({id: -1})}/>
+                    onClickHandler={()=> showAddTask.changeIdToAdd({id: -1})}/>
             </>
         )
     }

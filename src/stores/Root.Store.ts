@@ -3,9 +3,9 @@ import { makeAutoObservable } from "mobx";
 export interface Task {
     title: string;
     text: string;
-    id: number,
+    id: number | string,
     isFocus: boolean,
-    parentId?: number,
+    parentId?: number | string,
     subtasks?: any;
 }
 
@@ -20,19 +20,16 @@ class TaskStore {
 
     addTask(task: Task) {
         //const childId = `${this.id}${this.children.length + 1}`;
-        this.tasks = [...this.tasks, task];
-        console.log(task.parentId);
+        console.log("Adding task with id " + task.id);
         if (task.parentId){
-            const parent: any = this.tasks.filter((storeTask) => storeTask.id === task.parentId);
-            console.log(parent);
-            if (parent !==undefined) parent.subtasks.push(task.id);
+            const parent: Task | undefined = this.tasks.find((storeTask) => storeTask.id === task.parentId);
+            if (!!parent) parent.subtasks.push(task.id);
+        }else{
+            this.rootId++;
         }
-        //this.currentId++
-        console.log(this.tasks)
-    }
-
-    increaseRootId(taskId: number) {
-        this.rootId++;
+        this.tasks = [...this.tasks, {...task}];
+        console.log("Added parent task with id " + task.id);
+        console.log(this.tasks);
     }
 
     removeTask(index: {id: number}) {

@@ -6,13 +6,12 @@ import Button from "../shared/Button";
 import "../App.css"
 import taskList from "./TaskList";
 
-export const AddTask = observer(({id, parentId}: {id:number | string, parentId: number | null}) => {
+export const AddTask = observer(({id, parentId}: {id:number | string, parentId: number | null |string}) => {
     const [text, setText] = useState('');
-    let isFirst = taskStore.tasks.length === 0;
 
     const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
         taskStore.addTask({title: text, id: id, parentId: parentId, subtasks: []});
-        if (parentId === null) taskStore.increaseRootId();
+        //if (parentId === null) taskStore.increaseRootId();
         // title: "Задание";
         // text: text;
         // id: number,
@@ -24,7 +23,8 @@ export const AddTask = observer(({id, parentId}: {id:number | string, parentId: 
     };
 
     const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-        showAddTask.changeIdToAdd({idToAdd: undefined});
+        showAddTask.changeIdToAdd({idToAdd: undefined})
+        console.log("idToAdd = " + showAddTask.idToAdd);
     }
 
     return (
