@@ -100,7 +100,7 @@
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
-  width: 20%;
+  width: 30%;
 }
 
 
@@ -114,25 +114,26 @@
 }
 
 .main-task-button{
-  width: 200px;
+  width: 250px;
   height: 50px;
 }
 
 .numbered {
   list-style-type: none; /* Убираем стандартные точки */
   counter-reset: list-counter; /* Инициализация счетчика */
+  padding: 0;
 }
 
-.numbered li {
-  counter-increment: list-counter; /* Увеличение счетчика для каждого элемента */
-  position: relative; /* Позволяет позиционировать элемент относительно себя */
-}
+/*.numbered li {*/
+/*  counter-increment: list-counter; !* Увеличение счетчика для каждого элемента *!*/
+/*  position: relative; !* Позволяет позиционировать элемент относительно себя *!*/
+/*}*/
 
-.numbered li::before {
-  content: counter(list-counter) ". "; /* Выводим номер перед пунктом */
-  position: absolute; /* Абсолютное позиционирование для номера */
-  left: -1.5em; /* Рекомендуется настроить смещение */
-}
+/*.numbered li::before {*/
+/*  content: counter(list-counter) ". "; !* Выводим номер перед пунктом *!*/
+/*  position: absolute; !* Абсолютное позиционирование для номера *!*/
+/*  left: -1.5em; !* Рекомендуется настроить смещение *!*/
+/*}*/
 
 .add-task-input{
   width: 250px;

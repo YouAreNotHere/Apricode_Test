@@ -13,13 +13,11 @@ type Props = {
 const TaskItem: any= ({ task }: any) => {
     let ButtonBar: any;
     let TaskTree: any;
-    const childNumber = useRef(1);
+    const childNumber = useRef(0);
     const {tasks} = taskStore;
-    console.log("task = " + task);
-
+    
     if (typeof task === "string") {
         task = tasks.find((storeTask: Task) => storeTask.id === task);
-        console.log("id is string");
         TaskTree = (
             <div>
                 {task.subtasks?.map((subtask: any, index: any) => (
@@ -31,11 +29,14 @@ const TaskItem: any= ({ task }: any) => {
     }
 
     if (showAddTask.idToAdd === task.id) {
-        const childId = task.id + "+" + childNumber.current++;
+        const childId = task.id + "." + childNumber.current;
+        console.log(childId);
+        childNumber.current = childNumber.current + 1;
         ButtonBar = <AddTask id={childId} parentId={task.id}/>
     } else {
         ButtonBar = (<div className={"Button-Bar"}>
             <div className={"task-title"}>{task.title}</div>
+            <div className={"task-title"}>{task.text}</div>
             <div className={"button-wrapper"}>
                 <div className={"button-container"} title={"Добавить задание"}>
                     <Button buttonName={"Create-task-button"}
@@ -52,7 +53,6 @@ const TaskItem: any= ({ task }: any) => {
             </div>
         </div>);
     }
-    console.log("subtask = "+ task.subtasks[0] );
 
     if (task) {
         return (

@@ -10,7 +10,7 @@ export const AddTask = observer(({id, parentId}: {id:number | string, parentId: 
     const [text, setText] = useState('');
 
     const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        taskStore.addTask({title: text, id: id, parentId: parentId, subtasks: []});
+        taskStore.addTask({title: null, text: text, id: id, parentId: parentId, subtasks: []});
         //if (parentId === null) taskStore.increaseRootId();
         // title: "Задание";
         // text: text;
@@ -24,7 +24,6 @@ export const AddTask = observer(({id, parentId}: {id:number | string, parentId: 
 
     const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
         showAddTask.changeIdToAdd({idToAdd: undefined})
-        console.log("idToAdd = " + showAddTask.idToAdd);
     }
 
     return (

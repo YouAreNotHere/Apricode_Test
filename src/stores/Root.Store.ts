@@ -1,7 +1,7 @@
 import { makeAutoObservable } from "mobx";
 
 export interface Task {
-    title: string;
+    title: string | null;
     text: string;
     id: number | string,
     isFocus: boolean,
@@ -11,7 +11,7 @@ export interface Task {
 
 class TaskStore {
     tasks: Task[] = [];
-    rootId: number = 0;
+    rootId: number = 1;
 
     constructor() {
         makeAutoObservable(this);
@@ -20,16 +20,15 @@ class TaskStore {
 
     addTask(task: Task) {
         //const childId = `${this.id}${this.children.length + 1}`;
-        console.log("Adding task with id " + task.id);
         if (task.parentId){
             const parent: Task | undefined = this.tasks.find((storeTask) => storeTask.id === task.parentId);
             if (!!parent) parent.subtasks.push(task.id);
+            task = {...task, title: `Задание ${task.parentId, task.id}`}
         }else{
+            task = {...task, title: `Задание ${this.rootId}`}
             this.rootId++;
         }
         this.tasks = [...this.tasks, {...task}];
-        console.log("Added parent task with id " + task.id);
-        console.log(this.tasks);
     }
 
     removeTask(index: {id: number}) {

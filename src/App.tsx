@@ -10,7 +10,6 @@ const App = observer(() => {
     const {idToAdd, changeIdToAdd} = showAddTask;
     let appContent;
     tasks = tasks.filter((storeTask: Task) => typeof storeTask.id === "number");
-    console.log(tasks);
 
     if (idToAdd === -1){
         appContent = (
@@ -25,7 +24,7 @@ const App = observer(() => {
                 <TaskList tasks={tasks}/>
                 <Button
                     buttonName={"main-task-button"}
-                    text={"Добавь своё первое задание!"}
+                    text={"Добавь задание!"}
                     onClickHandler={()=> showAddTask.changeIdToAdd({id: -1})}/>
             </>
         )
