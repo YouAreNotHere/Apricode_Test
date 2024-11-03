@@ -20,24 +20,18 @@ const TaskItem: any = ({task, index, childIndex}: any ) => {
     const [ownNumber, setOwnNumber] = useState(1);
     const {tasks} = taskStore;
     let title : any;
-    console.log(tasks);
-//УДАЛЯЕТСЯ СРАЗУ 2 ИНОГДА
-    //ИНДЕКСЫ ДУБЛИРУЮТСЯ
+
     if (typeof task === "string") {
-        task = tasks.find((storeTask: Task) => storeTask.index === task);
-        console.log("index in sub")
-        console.log(index);
-        console.log("childIndex in sub")
-        console.log(childIndex);
-        title = (index) + "." + (childIndex + 1)
+        task = tasks.find((storeTask: Task) => storeTask.id === task);
+        title = (index) + "." + (childIndex)
     } else{
         title = index + 1;
     }
 
-    if (showAddTask.idToAdd === task.index) {
+    if (showAddTask.idToAdd === task.id) {
       ButtonBar = (
         <AddTask
-            parentIndex={task.index}
+            parentId={task.id}
             ownNumber={ownNumber}
             setOwnNumber={setOwnNumber}
         />
@@ -52,7 +46,7 @@ const TaskItem: any = ({task, index, childIndex}: any ) => {
               <Button
                 buttonName={'Create-task-button'}
                 onClickHandler={() =>
-                  showAddTask.changeIdToAdd({ id: task.index })
+                  showAddTask.changeIdToAdd({ id: task.id })
                 }
               >
                 <span className="create-icon"></span>
@@ -62,7 +56,6 @@ const TaskItem: any = ({task, index, childIndex}: any ) => {
               <Button
                 buttonName={'Create-task-button'}
                 onClickHandler={() => {
-                  console.log('removing task with id ' + task.id);
                   taskStore.removeTask(task);
                 }}
               >
@@ -79,7 +72,12 @@ const TaskItem: any = ({task, index, childIndex}: any ) => {
             <>
                 {ButtonBar}
                 {task.subtasks?.map((subtask: string | number, childIndex: any) => (
-                    <TaskItem key={taskStore.generateId()} task={subtask} childIndex = {childIndex} index ={title} />
+                    <TaskItem
+                        key={task.id}
+                        task={subtask}
+                        childIndex = {childIndex + 1}
+                        index = {title}
+                        parentId = {task.id}/>
                 ))}
             </>
         );

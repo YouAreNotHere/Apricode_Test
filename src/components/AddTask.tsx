@@ -7,33 +7,18 @@ import "../App.css"
 interface Props{
     id?:number | string | null,
     index?: number | string | null,
-    parentIndex: number | null |string,
+    parentId?: number | null |string,
     ownNumber?: number,
     setOwnNumber?: Function,
 }
 
-
-export const AddTask = observer(({index, parentIndex, ownNumber, setOwnNumber}: Props) => {
+export const AddTask = observer(({index = 1, parentId = null,}: Props) => {
     const [text, setText] = useState('');
-    let newIndex = index;
-    const parent = taskStore.tasks.find((storeTask: Task) => storeTask.index === parentIndex);
-    if (index === null || index === undefined) {
-        newIndex = parentIndex + "." + Number(parent.subtasks.length + 1);
-        console.log("newIndex in child case");
-        console.log(newIndex);
-    }else{
-        newIndex = index;
-        console.log("newIndex in parent case");
-        console.log(newIndex);
-    }
 
     const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        console.log(index);
-        taskStore.addTask({ text, index: newIndex, parentIndex, subtasks: [], isFocus: false});
+        taskStore.addTask({ text, parentId, subtasks: [], isFocus: false});
         setText("");
         showAddTask.changeIdToAdd({idToAdd: null});
-        console.log(showAddTask.idToAdd);
-        if (setOwnNumber) setOwnNumber((n: number) => n + 1)
     };
 
     const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {

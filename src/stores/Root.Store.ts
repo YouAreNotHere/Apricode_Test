@@ -6,7 +6,7 @@ export interface Task {
     id?: number | string,
     index?: number | string,
     isFocus: boolean,
-    parentIndex?: number | string,
+    parentId?: number | string,
     subtasks?: any;
 }
 
@@ -28,44 +28,40 @@ class TaskStore {
 
     addTask(task: Task) {
         let newTasks: Task[];
-        if (task.parentIndex){
+        if (task.parentId){
+            task = {...task, id : this.generateId()}
             newTasks = this.tasks.map((storeTask): Task => {
-                if (storeTask.index === task.parentIndex) {
-                    return {...storeTask, subtasks:[...storeTask.subtasks, task.index]}
+                if (storeTask.id === task.parentId) {
+                    return {...storeTask, subtasks:[...storeTask.subtasks, task.id]}
                 }else{
                     return storeTask
                 }
             })
-            task = {...task, title: `Задание ${task.parentIndex, task.index}`, id : this.generateId()}
             this.tasks = [...newTasks, task];
             return;
         }else{
-            task = {...task, title: `Задание ${task.index}`, id : this.generateId()}
+            //Удалил title: `Задание ${task.index}`
+            task = {...task, id : this.generateId()}
         }
         this.tasks = [...this.tasks, task];
-        console.log(this.tasks);
+
     }
 
     removeTask(task: Task) {
-        console.log("start removing " + task.index);
-
         const newTasks : Task[] = this.tasks.map((storeTask: Task): any => {
-            if (storeTask.index === task.index) {
+            if (storeTask.id === task.id) {
                 return null;
             }
-
-            if (storeTask.index === task.parentIndex) {
+            if (storeTask.id === task.parentId) {
                 return {
                     ...storeTask,
-                    subtasks: storeTask.subtasks.filter((storeSubtask: number | string) => storeSubtask !== task.index)
+                    subtasks: storeTask.subtasks.filter((storeSubtask: number | string) => storeSubtask !== task.id)
                 };
             }
 
             return storeTask;
         })
             .filter((storeTask: Task) => storeTask !== null);
-
-        console.log(newTasks);
         this.tasks = newTasks;
     }
 
