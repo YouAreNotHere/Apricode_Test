@@ -1,5 +1,5 @@
-import React, { useContext, createContext, useRef } from "react";
-import { observer } from "mobx-react-lite";
+import React, {useContext, createContext, useRef, memo, useEffect, useState} from "react";
+import {observer} from "mobx-react-lite";
 import TaskList from "./TaskList";
 import {taskStore, Task, showAddTask} from "../stores/Root.Store";
 import Button from "../shared/Button";
@@ -10,29 +10,28 @@ type Props = {
     task: Task;
 };
 
-const TaskItem: any= ({ task }: any) => {
+interface TaskItemProps {
+    task?: any
+}
+
+const TaskItem: any = ({task}: any ) => {
     let ButtonBar: any;
     let TaskTree: any;
-    const childNumber = useRef(0);
+    const [ownNumber, setOwnNumber] = useState(1);
     const {tasks} = taskStore;
-    
+
+    console.log("tasks");
+    console.log(tasks);
+    console.log("task before");
+    console.log(task);
     if (typeof task === "string") {
         task = tasks.find((storeTask: Task) => storeTask.id === task);
-        TaskTree = (
-            <div>
-                {task.subtasks?.map((subtask: any, index: any) => (
-                    <TaskItem key={subtask} tasks={subtask}/>
-                ))}
-            </div>
-
-        )
+        console.log("task after");
+        console.log(task);
     }
 
     if (showAddTask.idToAdd === task.id) {
-        const childId = task.id + "." + childNumber.current;
-        console.log(childId);
-        childNumber.current = childNumber.current + 1;
-        ButtonBar = <AddTask id={childId} parentId={task.id}/>
+        ButtonBar = <AddTask id={null} parentId={task.id} ownNumber={ownNumber} setOwnNumber={setOwnNumber}/>
     } else {
         ButtonBar = (<div className={"Button-Bar"}>
             <div className={"task-title"}>{task.title}</div>
@@ -46,7 +45,9 @@ const TaskItem: any= ({ task }: any) => {
                 </div>
                 <div className={"button-container"} title={"Удалить задание"}>
                     <Button buttonName={"Create-task-button"}
-                            onClickHandler={() => taskStore.removeTask({id: task.id})}>
+                            onClickHandler={() => {
+                                console.log("removing task with id " + task.id);
+                                taskStore.removeTask( task.id)}}>
                         <span className="delete-icon"></span>
                     </Button>
                 </div>
@@ -58,7 +59,7 @@ const TaskItem: any= ({ task }: any) => {
         return (
             <>
                 {ButtonBar}
-                {task.subtasks?.map((subtask: number | string) => (
+                {task.subtasks?.map((subtask: string | number) => (
                     <TaskItem key={subtask} task={subtask}/>
                 ))}
             </>
@@ -67,4 +68,6 @@ const TaskItem: any= ({ task }: any) => {
 
 };
 
+//export default memo(TaskItem);
+// export default memo(observer(TaskItem));
 export default observer(TaskItem);

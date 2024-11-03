@@ -1,25 +1,30 @@
-import React, { useState } from 'react';
-import {useStore} from "../shared/UseStore";
+import React, { useState, useRef } from 'react';
 import {observer} from "mobx-react-lite";
 import {taskStore, showAddTask} from "../stores/Root.Store";
 import Button from "../shared/Button";
 import "../App.css"
-import taskList from "./TaskList";
 
-export const AddTask = observer(({id, parentId}: {id:number | string, parentId: number | null |string}) => {
+interface Props{
+    id:number | string | null,
+    parentId: number | null |string,
+    ownNumber?: number,
+    setOwnNumber?: Function,
+}
+
+
+export const AddTask = observer(({id, parentId, ownNumber, setOwnNumber}: Props) => {
     const [text, setText] = useState('');
+    let newId = id;
+    if (id === null){
+        newId = parentId + "." + ownNumber;
+        console.log(id);
+    }
 
     const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        taskStore.addTask({title: null, text: text, id: id, parentId: parentId, subtasks: []});
-        //if (parentId === null) taskStore.increaseRootId();
-        // title: "Задание";
-        // text: text;
-        // id: number,
-        //     isFocus: boolean,
-        //     parentId?: number,
-        //     subtasks?: Task[];});
+        taskStore.addTask({title: null, text, id: newId, parentId, subtasks: [], isFocus: false});
         setText("");
         showAddTask.changeIdToAdd({idToAdd: undefined});
+        if (setOwnNumber) setOwnNumber((n: number) => n + 1)
     };
 
     const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {

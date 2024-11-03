@@ -19,7 +19,6 @@ class TaskStore {
 
 
     addTask(task: Task) {
-        //const childId = `${this.id}${this.children.length + 1}`;
         if (task.parentId){
             const parent: Task | undefined = this.tasks.find((storeTask) => storeTask.id === task.parentId);
             if (!!parent) parent.subtasks.push(task.id);
@@ -28,19 +27,19 @@ class TaskStore {
             task = {...task, title: `Задание ${this.rootId}`}
             this.rootId++;
         }
-        this.tasks = [...this.tasks, {...task}];
+        this.tasks = [...this.tasks, task];
+        console.log(this.tasks);
     }
 
-    removeTask(index: {id: number}) {
-        const newTasks = [...this.tasks];
-        newTasks.splice(index.id, 1);
+    removeTask(id: number) {
+        console.log(this.tasks);
+        console.log("removeTask", id);
+        const newTasks = this.tasks.filter((storeTask): any => storeTask.id !== id);
+        console.log(newTasks);
         this.tasks = newTasks;
+        console.log(this.tasks);
     }
 
-    // addChild({parentId, childId}: {parentId: number, childId: number}) {
-    //
-    //     this.children.push(newChild);
-    // }
 
     updateTask(index: number, task: Task) {
         Object.assign(this.tasks[index], task);

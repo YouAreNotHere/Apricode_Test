@@ -9,7 +9,7 @@ const App = observer(() => {
     let {tasks, rootId, Task} = taskStore;
     const {idToAdd, changeIdToAdd} = showAddTask;
     let appContent;
-    tasks = tasks.filter((storeTask: Task) => typeof storeTask.id === "number");
+    tasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
 
     if (idToAdd === -1){
         appContent = (
