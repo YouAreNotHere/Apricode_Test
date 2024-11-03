@@ -9,13 +9,14 @@ const App = observer(() => {
     let {tasks, rootId, Task} = taskStore;
     const {idToAdd, changeIdToAdd} = showAddTask;
     let appContent;
-    tasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
+    tasks = tasks.filter((storeTask: Task) => storeTask.parentIndex === null);
+    const index: number = tasks.length < 1 ? 1 : tasks.length +1;
 
     if (idToAdd === -1){
         appContent = (
             <>
                 <TaskList tasks={tasks}/>
-                <AddTask id={rootId} parentId = {null}/>
+                <AddTask index={index} parentIndex={null}/>
             </>
         )
     }else{

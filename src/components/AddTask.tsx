@@ -1,34 +1,43 @@
 import React, { useState, useRef } from 'react';
 import {observer} from "mobx-react-lite";
-import {taskStore, showAddTask} from "../stores/Root.Store";
+import {taskStore, showAddTask, Task} from "../stores/Root.Store";
 import Button from "../shared/Button";
 import "../App.css"
 
 interface Props{
-    id:number | string | null,
-    parentId: number | null |string,
+    id?:number | string | null,
+    index?: number | string | null,
+    parentIndex: number | null |string,
     ownNumber?: number,
     setOwnNumber?: Function,
 }
 
 
-export const AddTask = observer(({id, parentId, ownNumber, setOwnNumber}: Props) => {
+export const AddTask = observer(({index, parentIndex, ownNumber, setOwnNumber}: Props) => {
     const [text, setText] = useState('');
-    let newId = id;
-    if (id === null){
-        newId = parentId + "." + ownNumber;
-        console.log(id);
+    let newIndex = index;
+    const parent = taskStore.tasks.find((storeTask: Task) => storeTask.index === parentIndex);
+    if (index === null || index === undefined) {
+        newIndex = parentIndex + "." + Number(parent.subtasks.length + 1);
+        console.log("newIndex in child case");
+        console.log(newIndex);
+    }else{
+        newIndex = index;
+        console.log("newIndex in parent case");
+        console.log(newIndex);
     }
 
     const onClickSuggestHandler = async (e: React.MouseEvent<HTMLButtonElement>) => {
-        taskStore.addTask({title: null, text, id: newId, parentId, subtasks: [], isFocus: false});
+        console.log(index);
+        taskStore.addTask({ text, index: newIndex, parentIndex, subtasks: [], isFocus: false});
         setText("");
-        showAddTask.changeIdToAdd({idToAdd: undefined});
+        showAddTask.changeIdToAdd({idToAdd: null});
+        console.log(showAddTask.idToAdd);
         if (setOwnNumber) setOwnNumber((n: number) => n + 1)
     };
 
     const onClickCancelHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-        showAddTask.changeIdToAdd({idToAdd: undefined})
+        showAddTask.changeIdToAdd({idToAdd: null})
     }
 
     return (

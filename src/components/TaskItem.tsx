@@ -14,53 +14,72 @@ interface TaskItemProps {
     task?: any
 }
 
-const TaskItem: any = ({task}: any ) => {
+const TaskItem: any = ({task, index, childIndex}: any ) => {
     let ButtonBar: any;
     let TaskTree: any;
     const [ownNumber, setOwnNumber] = useState(1);
     const {tasks} = taskStore;
-
-    console.log("tasks");
+    let title : any;
     console.log(tasks);
-    console.log("task before");
-    console.log(task);
+//УДАЛЯЕТСЯ СРАЗУ 2 ИНОГДА
+    //ИНДЕКСЫ ДУБЛИРУЮТСЯ
     if (typeof task === "string") {
-        task = tasks.find((storeTask: Task) => storeTask.id === task);
-        console.log("task after");
-        console.log(task);
+        task = tasks.find((storeTask: Task) => storeTask.index === task);
+        console.log("index in sub")
+        console.log(index);
+        console.log("childIndex in sub")
+        console.log(childIndex);
+        title = (index) + "." + (childIndex + 1)
+    } else{
+        title = index + 1;
     }
 
-    if (showAddTask.idToAdd === task.id) {
-        ButtonBar = <AddTask id={null} parentId={task.id} ownNumber={ownNumber} setOwnNumber={setOwnNumber}/>
+    if (showAddTask.idToAdd === task.index) {
+      ButtonBar = (
+        <AddTask
+            parentIndex={task.index}
+            ownNumber={ownNumber}
+            setOwnNumber={setOwnNumber}
+        />
+      );
     } else {
-        ButtonBar = (<div className={"Button-Bar"}>
-            <div className={"task-title"}>{task.title}</div>
-            <div className={"task-title"}>{task.text}</div>
-            <div className={"button-wrapper"}>
-                <div className={"button-container"} title={"Добавить задание"}>
-                    <Button buttonName={"Create-task-button"}
-                            onClickHandler={() => showAddTask.changeIdToAdd({id: task.id})}>
-                        <span className="create-icon"></span>
-                    </Button>
-                </div>
-                <div className={"button-container"} title={"Удалить задание"}>
-                    <Button buttonName={"Create-task-button"}
-                            onClickHandler={() => {
-                                console.log("removing task with id " + task.id);
-                                taskStore.removeTask( task.id)}}>
-                        <span className="delete-icon"></span>
-                    </Button>
-                </div>
+      ButtonBar = (
+        <div className={'Button-Bar'}>
+          <div className={'task-title'}>Задание {title}</div>
+          <div className={'task-title'}>{task.text}</div>
+          <div className={'button-wrapper'}>
+            <div className={'button-container'} title={'Добавить задание'}>
+              <Button
+                buttonName={'Create-task-button'}
+                onClickHandler={() =>
+                  showAddTask.changeIdToAdd({ id: task.index })
+                }
+              >
+                <span className="create-icon"></span>
+              </Button>
             </div>
-        </div>);
+            <div className={'button-container'} title={'Удалить задание'}>
+              <Button
+                buttonName={'Create-task-button'}
+                onClickHandler={() => {
+                  console.log('removing task with id ' + task.id);
+                  taskStore.removeTask(task);
+                }}
+              >
+                <span className="delete-icon"></span>
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
     }
 
     if (task) {
         return (
             <>
                 {ButtonBar}
-                {task.subtasks?.map((subtask: string | number) => (
-                    <TaskItem key={subtask} task={subtask}/>
+                {task.subtasks?.map((subtask: string | number, childIndex: any) => (
+                    <TaskItem key={taskStore.generateId()} task={subtask} childIndex = {childIndex} index ={title} />
                 ))}
             </>
         );
@@ -68,6 +87,4 @@ const TaskItem: any = ({task}: any ) => {
 
 };
 
-//export default memo(TaskItem);
-// export default memo(observer(TaskItem));
 export default observer(TaskItem);
