@@ -1,6 +1,7 @@
-import { makeAutoObservable } from "mobx";
+import { makeAutoObservable , runInAction} from "mobx";
 
 export interface Task {
+    task? :any ;
     title?: string | null;
     text: string;
     id?: number | string,
@@ -63,6 +64,39 @@ class TaskStore {
         })
             .filter((storeTask: Task) => storeTask !== null);
         this.tasks = newTasks;
+    }
+
+    focusTask (task: Task, currentFocus: boolean){
+        let newTasks:any = [...this.tasks];
+
+            const changeParent = (currentTask: any) =>{
+                newTasks.map((storeTask: Task): any => {
+                    //Нужно отключать и детей, но если у родителя есть другие включенные дети, то нет
+                    if (storeTask.id === currentTask.id) {
+                        changeFocus(storeTask);
+                    }else if (storeTask.id === currentTask.parentId) {
+                        if (currentFocus && storeTask.subtasks.length < 2) changeParent(storeTask);
+                    }else{
+                        return storeTask;
+                    }
+                })
+            }
+
+            const changeFocus = (currentTask : any) => {
+                console.log(currentTask)
+                console.log(currentFocus);
+                currentTask.isFocus = currentFocus;
+                currentTask.subtasks?.map((subtaskId: string | number) => {
+                    const subtask = newTasks.find((storeTask: Task) => storeTask.id === subtaskId);
+                    if (subtask.isFocus) changeFocus(subtask);
+                })
+            }
+
+            changeParent(task);
+            console.log(newTasks);
+            this.tasks = newTasks;
+
+
     }
 
 

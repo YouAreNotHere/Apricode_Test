@@ -1,0 +1,13 @@
+.task-item__content {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+
+    padding-bottom: 8px;
+    border-bottom: 1px solid black;
+}
+
+.task-item__title,
+.task-item__text {
+    margin-right: 30px;
+}

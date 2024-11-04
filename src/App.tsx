@@ -1,39 +1,37 @@
-import { useStore, RootStoreContext } from "./shared/UseStore";
-import { RootStore, Task, taskStore, showAddTask} from "./stores/Root.Store";
-import TaskList from "./components/TaskList";
-import {AddTask} from "./components/AddTask";
+import { Task, taskStore, showAddTask} from "./stores/Root.Store";
+import TaskList from "./components/TaskList/TaskList";
+import {AddTask} from "./components/AddTask/AddTask";
 import {observer} from "mobx-react-lite";
-import Button from "./shared/Button";
+import {Button} from "./shared";
 
 const App = observer(() => {
-    let {tasks, rootId, Task} = taskStore;
-    const {idToAdd, changeIdToAdd} = showAddTask;
-    let appContent;
-    tasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
+    const {tasks, rootId} = taskStore;
+    const {idToAdd} = showAddTask;
 
-    if (idToAdd === -1){
-        appContent = (
-            <>
-                <TaskList tasks={tasks}/>
-                <AddTask/>
-            </>
-        )
-    }else{
-        appContent = (
-            <>
-                <TaskList tasks={tasks}/>
-                <Button
-                    buttonName={"main-task-button"}
-                    text={"Добавь задание!"}
-                    onClickHandler={()=> showAddTask.changeIdToAdd({id: -1})}/>
-            </>
-        )
-    }
-
+    const rootTasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
+    console.log(tasks);
 
     return (
         <div className={"app-container"}>
-            {appContent}
+            <h2 className='main-title'>Список задач</h2>
+            {idToAdd === -1 ? (
+                <div className='content'>
+                    <TaskList tasks={rootTasks}/>
+                    <AddTask id={rootId} parentId = {null}/>
+                </div>
+            ) : (
+                <div className='content'>
+                    <Button
+                        className={"main-task-button"}
+                        text={"+ Добавить задачу"}
+                        onClickHandler={()=> showAddTask.changeIdToAdd({id: -1})}
+                    />
+                    <TaskList tasks={rootTasks}/>
+                </div>
+            )}
+            <div className={"text-section"}>
+
+            </div>
         </div>
     );
 }) ;
