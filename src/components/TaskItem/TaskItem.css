@@ -11,3 +11,16 @@
 .task-item__text {
     margin-right: 30px;
 }
+
+.arrow {
+    font-size: 24px;
+    color: black;
+    margin-top: -7px;
+}
+
+.arrow-up {
+    font-size: 24px;
+    color: black;
+    margin-top: -5px;
+    transform: rotate(-90deg);
+}

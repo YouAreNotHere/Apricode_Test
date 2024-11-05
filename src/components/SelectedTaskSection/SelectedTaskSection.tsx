@@ -6,18 +6,25 @@ import selectedTaskItem from '../SelectedTaskItem/SelectedTaskItem';
 
 const SelectedTaskSection: any  = observer(({rootTasks= []}) => {
 
-    const {checkedTasksLines, tasks, selectedTasksIds} = taskStore;
-    const selectedTasks: Task[] = selectedTasksIds.map((id: any) => tasks.find((storeTask: Task) => storeTask.id === id));
+    const {checkedTasksLines, tasks, selectedTask} = taskStore;
+    console.log(selectedTask);
 
     return (
-      <ul className="selected-task-container">
-          {rootTasks.map((task: any, index: any) => (
-              <li key={task.id}>
-                  <SelectedTaskItem task={task} index = {index}/>
-              </li>
-          ))}
-      </ul>
+      <div>
+        {selectedTask ? (
+          <>
+            <h2 className="task-title">
+              {selectedTask.title}
+            </h2>
+            <br />
+            <p className="task-title">
+              {selectedTask.task?.text}
+            </p>
+
+          </>
+        ) : null}
+      </div>
     )
-} )
+})
 
 export default SelectedTaskSection;

@@ -16,7 +16,9 @@ const SelectedTaskItem: any = ({task, index, childIndex,  offset = 0, ancestorsI
 
   return (
     <div>
-      {isSelected ? `Задание ${title}` : null}
+      {isSelected
+        ? <div className="selected-task-container"> Задание {title}  {task.text} </div>
+        : null}
       {subtasks?.map((subtask: any, childIndex: number) => (
         <SelectedTaskItem
           key={subtask.id}

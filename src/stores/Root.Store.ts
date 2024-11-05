@@ -15,9 +15,23 @@ class TaskStore {
     tasks: Task[] = [];
     checkedTasksLines: string[][] = [];
     selectedTasksIds: any = [];
+    selectedTask: any = null;
+    checkedTasksIds: Set<string> = new Set();
 
     constructor() {
         makeAutoObservable(this);
+        this.loadTasks();
+    }
+
+    loadTasks() {
+        const storedTasks = localStorage.getItem('tasks');
+        if (storedTasks) {
+            this.tasks = JSON.parse(storedTasks);
+        }
+    }
+
+    saveTasks() {
+        localStorage.setItem('tasks', JSON.stringify(this.tasks));
     }
 
     generateId() {
@@ -40,12 +54,11 @@ class TaskStore {
                 }
             })
             this.tasks = [...newTasks, task];
-            return;
         }else{
             task = {...task, id : this.generateId()}
         }
         this.tasks = [...this.tasks, task];
-
+        this.saveTasks();
     }
 
     removeTask(task: Task) {
@@ -64,31 +77,64 @@ class TaskStore {
         })
             .filter((storeTask: Task) => storeTask !== null);
         this.tasks = newTasks;
+        if (!newTasks.find((storeTask: Task) => storeTask.id === task.id)) {
+            this.deleteFromSelected()
+        }
+        this.saveTasks();
     }
 
-    focusTask (ancestorsIds: string[], currentFocus: boolean){
-        let newCheckedTasksLines: string [][];
+    checkTask(task: Task) {
+        const newCheckedTasksIds = new Set(this.checkedTasksIds);
 
-        if (currentFocus){
-            newCheckedTasksLines = this.checkedTasksLines.filter((updatedTasksLine: any) =>{
-                return `${updatedTasksLine}` !== `${ancestorsIds}`
-            })
-        }else{
-            newCheckedTasksLines =[...this.checkedTasksLines, ancestorsIds];
+        const checkSubtasks = (subtasks: string[] | undefined, isAdding: boolean) => {
+            if (!subtasks?.length) return;
+
+            subtasks.forEach((subtaskId: string) => {
+                isAdding
+                  ? newCheckedTasksIds.add(subtaskId)
+                  : newCheckedTasksIds.delete(subtaskId);
+
+                const subtask = this.tasks.find((task) => task.id === subtaskId);
+                checkSubtasks(subtask?.subtasks, isAdding);
+            });
         }
 
-        this.checkedTasksLines = newCheckedTasksLines;
+        if (newCheckedTasksIds.has(task.id as string)) {
+            newCheckedTasksIds.delete(task.id as string)
+            checkSubtasks(task.subtasks, false);
+        } else {
+            newCheckedTasksIds.add(task.id as string);
+            checkSubtasks(task.subtasks, true);
+        }
+
+        const checkParentTask = (parentTask: Task) => {
+            if (parentTask.subtasks?.every((taskId: string) => newCheckedTasksIds.has(taskId))) {
+                newCheckedTasksIds.add(parentTask.id as string);
+
+                const grandfatherTask = this.tasks.find((storedTask) => storedTask.id === parentTask.parentId);
+                if (grandfatherTask) {
+                    checkParentTask(grandfatherTask);
+                }
+            }
+        };
+        const parentTask = this.tasks.find((storedTask) => storedTask.id === task.parentId);
+        if (parentTask) {
+            checkParentTask(parentTask);
+        }
+
+        this.checkedTasksIds = newCheckedTasksIds;
     }
 
-    addToSelected( id: any){
-        this.selectedTasksIds = [...this.selectedTasksIds, id];
+    addToSelected( {task, title}: any){
+        runInAction(() => {
+            this.selectedTask = {task, title};
+        })
     }
 
-    deleteFromSelected(id: any){
-        const newSelectedIds =[...this.selectedTasksIds];
-        newSelectedIds.filter((storeId: any) => storeId !== id);
-        this.selectedTasksIds = newSelectedIds;
-        console.log(newSelectedIds);
+    deleteFromSelected(){
+        runInAction(() => {
+            this.selectedTask = null;
+        })
     }
 
 
