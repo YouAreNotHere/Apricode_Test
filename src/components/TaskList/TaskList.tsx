@@ -7,15 +7,15 @@ import "../../App.css"
 
 const TaskList: React.FC<{ tasks?: Task[]  }> = observer(({tasks  = []}) => {
 
-        return (
+    return (
             <ul className={"numbered"}>
                 {tasks.map((task: any, index: any) => (
-                    <li>
-                        <TaskItem key={task.id} task={task} index={index}/>
+                    <li key={task.id}>
+                        <TaskItem task={task} index={index} />
                     </li>
                 ))}
             </ul>
-        );
+    );
 
 
 });

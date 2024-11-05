@@ -13,7 +13,8 @@ export interface Task {
 
 class TaskStore {
     tasks: Task[] = [];
-    rootId: number = 1;
+    checkedTasksLines: string[][] = [];
+    selectedTasksIds: any = [];
 
     constructor() {
         makeAutoObservable(this);
@@ -41,7 +42,6 @@ class TaskStore {
             this.tasks = [...newTasks, task];
             return;
         }else{
-            //Удалил title: `Задание ${task.index}`
             task = {...task, id : this.generateId()}
         }
         this.tasks = [...this.tasks, task];
@@ -66,37 +66,29 @@ class TaskStore {
         this.tasks = newTasks;
     }
 
-    focusTask (task: Task, currentFocus: boolean){
-        let newTasks:any = [...this.tasks];
+    focusTask (ancestorsIds: string[], currentFocus: boolean){
+        let newCheckedTasksLines: string [][];
 
-            const changeParent = (currentTask: any) =>{
-                newTasks.map((storeTask: Task): any => {
-                    //Нужно отключать и детей, но если у родителя есть другие включенные дети, то нет
-                    if (storeTask.id === currentTask.id) {
-                        changeFocus(storeTask);
-                    }else if (storeTask.id === currentTask.parentId) {
-                        if (currentFocus && storeTask.subtasks.length < 2) changeParent(storeTask);
-                    }else{
-                        return storeTask;
-                    }
-                })
-            }
+        if (currentFocus){
+            newCheckedTasksLines = this.checkedTasksLines.filter((updatedTasksLine: any) =>{
+                return `${updatedTasksLine}` !== `${ancestorsIds}`
+            })
+        }else{
+            newCheckedTasksLines =[...this.checkedTasksLines, ancestorsIds];
+        }
 
-            const changeFocus = (currentTask : any) => {
-                console.log(currentTask)
-                console.log(currentFocus);
-                currentTask.isFocus = currentFocus;
-                currentTask.subtasks?.map((subtaskId: string | number) => {
-                    const subtask = newTasks.find((storeTask: Task) => storeTask.id === subtaskId);
-                    if (subtask.isFocus) changeFocus(subtask);
-                })
-            }
+        this.checkedTasksLines = newCheckedTasksLines;
+    }
 
-            changeParent(task);
-            console.log(newTasks);
-            this.tasks = newTasks;
+    addToSelected( id: any){
+        this.selectedTasksIds = [...this.selectedTasksIds, id];
+    }
 
-
+    deleteFromSelected(id: any){
+        const newSelectedIds =[...this.selectedTasksIds];
+        newSelectedIds.filter((storeId: any) => storeId !== id);
+        this.selectedTasksIds = newSelectedIds;
+        console.log(newSelectedIds);
     }
 
 
