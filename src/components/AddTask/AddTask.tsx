@@ -4,6 +4,7 @@ import {taskStore, showAddTask } from "../../stores/Root.Store";
 import {Button} from "../../shared";
 import "../../App.css"
 import './AddTask.css';
+import SuggestButton from '../../shared/Button/SuggestButton';
 
 interface Props{
     id?:number | string | null,
@@ -33,7 +34,7 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
     });
 
     const onClickSuggestHandler = () => {
-        taskStore.addTask({ text, parentId, subtasks: [], isFocus: false});
+        taskStore.addTask({ title: "Задача", text, parentId, subtasks: [], isFocus: false});
         setText("");
         showAddTask.changeIdToAdd({idToAdd: null});
     };
@@ -47,7 +48,8 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
             <input className='add-task__input' autoFocus onChange={(e) => setText(e.target.value)} value={text} />
             <div className={"button-container"} title={"Добавить выбранное задание"}>
                 <Button onClickHandler={onClickSuggestHandler} className={"suggest-task-button"}>
-                    <span className="create-icon"></span>
+                    {/*<span className="create-icon"></span>*/}
+                    <SuggestButton/>
                 </Button>
             </div>
             <div className={"button-container"} title={"Отменить добавление задания"}>

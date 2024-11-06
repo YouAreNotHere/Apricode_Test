@@ -6,11 +6,10 @@ import {Button} from "./shared";
 import SelectedTaskSection from './components/SelectedTaskSection/SelectedTaskSection';
 
 const App = observer(() => {
-    const {tasks, rootId, selectedTask} = taskStore;
+    const {tasks, rootId, selectedTaskAndTitle} = taskStore;
     const {idToAdd} = showAddTask;
 
     const rootTasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
-    console.log(tasks);
 
     return (
         <div className="app-container">
@@ -32,8 +31,8 @@ const App = observer(() => {
                     </div>
                 )}
             </div>
-          <div className = {selectedTask?.task ? "selected-task-container": undefined}>
-            <SelectedTaskSection />
+          <div className = {selectedTaskAndTitle?.task ? "selected-task-container": undefined}>
+            <SelectedTaskSection/>
           </div>
         </div>
 

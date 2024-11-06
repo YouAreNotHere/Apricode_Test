@@ -1,12 +1,9 @@
 import { makeAutoObservable , runInAction} from "mobx";
 
 export interface Task {
-    task? :any ;
-    title?: string | null;
+    title: string | null;
     text: string;
     id?: number | string,
-    index?: number | string,
-    isFocus: boolean,
     parentId?: number | string,
     subtasks?: any;
 }
@@ -15,8 +12,9 @@ class TaskStore {
     tasks: Task[] = [];
     checkedTasksLines: string[][] = [];
     selectedTasksIds: any = [];
-    selectedTask: any = null;
+    selectedTaskAndTitle: any = null;
     checkedTasksIds: Set<string> = new Set();
+    updatedTaskId: any;
 
     constructor() {
         makeAutoObservable(this);
@@ -43,8 +41,9 @@ class TaskStore {
     }
 
     addTask(task: Task) {
-        let newTasks: Task[];
-        if (task.parentId){
+        let newTasks : Task[];
+        if (!!task.parentId){
+            console.log("Create child")
             task = {...task, id : this.generateId()}
             newTasks = this.tasks.map((storeTask): Task => {
                 if (storeTask.id === task.parentId) {
@@ -56,8 +55,8 @@ class TaskStore {
             this.tasks = [...newTasks, task];
         }else{
             task = {...task, id : this.generateId()}
+            this.tasks = [...this.tasks, task];
         }
-        this.tasks = [...this.tasks, task];
         this.saveTasks();
     }
 
@@ -77,9 +76,6 @@ class TaskStore {
         })
             .filter((storeTask: Task) => storeTask !== null);
         this.tasks = newTasks;
-        if (!newTasks.find((storeTask: Task) => storeTask.id === task.id)) {
-            this.deleteFromSelected()
-        }
         this.saveTasks();
     }
 
@@ -125,21 +121,32 @@ class TaskStore {
         this.checkedTasksIds = newCheckedTasksIds;
     }
 
-    addToSelected( {task, title}: any){
+    addToSelected( selectedTaskAndTitle: any = null ){
         runInAction(() => {
-            this.selectedTask = {task, title};
+            this.selectedTaskAndTitle = selectedTaskAndTitle;
         })
     }
 
     deleteFromSelected(){
         runInAction(() => {
-            this.selectedTask = null;
+            this.selectedTaskAndTitle = null;
         })
     }
 
 
-    updateTask(index: number, task: Task) {
-        Object.assign(this.tasks[index], task);
+    updateTask({text, title, task}: any) {
+        let newTasks;
+        newTasks = this.tasks.map((storeTask: Task) => {
+            if (storeTask.id !== task.task.id){
+               return storeTask
+            }else{
+                console.log("Huy")
+               return {...storeTask, title, text }
+            }
+        })
+        console.log(newTasks)
+        this.tasks = [...newTasks]
+        this.saveTasks();
     }
 }
 

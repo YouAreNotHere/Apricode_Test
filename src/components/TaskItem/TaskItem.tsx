@@ -3,33 +3,48 @@ import {observer} from "mobx-react-lite";
 import {taskStore, Task, showAddTask} from "../../stores/Root.Store";
 import {Button} from "../../shared/Button/Button";
 import "../../App.css"
+import "../../shared/Button/Button.css"
 import './TaskItem.css';
 import {AddTask} from "../AddTask/AddTask";
 import UpdateButton from '../../shared/Button/UpdateButton';
+import { UpdateTask } from '../UpdateTask/UpdateTask';
+
 
 const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}: any ) => {
-    const {checkedTasksLines, tasks, selectedTask, checkedTasksIds, deleteFromSelected} = taskStore;
+    const {checkedTasksLines, tasks, selectedTaskAndTitle, checkedTasksIds, deleteFromSelected} = taskStore;
     const currentFocus = checkedTasksLines.some((tasksLine: string[]) => tasksLine.includes(task.id));
     const [isExpanded, setExpanded] = React.useState(true);
 
-    const title = !!childIndex ? index + "." + childIndex : index + 1;
+    let title: string;
+
+     if (!!childIndex){
+        title = ` ${index}.${childIndex}`;
+    }else {
+        title = `${task.title} ${index + 1}`
+    }if (task.title !== "Задача") title = task.title;
 
     const isTaskAdding = showAddTask.idToAdd === task.id;
+    const isTaskUpdated = taskStore.updatedTaskId === task.id;
+
 
     useEffect(()=> {
-        if (task.id === selectedTask?.task.id) {
+        if (task.id === selectedTaskAndTitle?.task?.id) {
             taskStore.addToSelected({task, title})
         }
-    },[childIndex, index])
+    },[childIndex, index]);
 
     const subtasks = useMemo(() =>
             task.subtasks.map((subtaskId: any) => tasks.find((storeTask: Task) => storeTask.id === subtaskId)),
         [task.subtasks, tasks]
     );
 
+
     return (
       <div className="task-item" style={{ marginLeft: offset }}>
-        {isTaskAdding ? (
+          {isTaskUpdated ? (
+            <UpdateTask task = {task}/>
+          ):
+        isTaskAdding ? (
           <AddTask parentId={task.id} />
         ) : (
           <div className={'task-item__content'}>
@@ -57,8 +72,7 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
               className={'task-item__title'}
               onClick={() => taskStore.addToSelected({ task, title })}
             >
-              {' '}
-              Задание {title}
+                {title}
             </div>
             <div className={'button-wrapper'}>
               <div className={'button-container'} title={'Добавить задание'}>
@@ -71,20 +85,13 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
                   <span className="create-icon"></span>
                 </Button>
               </div>
-              <div>
-                <Button
-                  className="update-task-button"
-                  onClickHandler={() =>
-                    showAddTask.changeIdToAdd({ id: task.id })
-                  }
-                >
-                    <UpdateButton/>
-                </Button>
-              </div>
               <div className={'button-container'} title={'Удалить задание'}>
                 <Button
                   className="create-task-button remove-task-button"
-                  onClickHandler={() => taskStore.removeTask(task)}
+                  onClickHandler={() => {
+                      taskStore.removeTask(task);
+                      if (task.id === taskStore.selectedTaskAndTitle?.task?.id) taskStore.addToSelected()
+                  }}
                 >
                   <span className="delete-icon"></span>
                 </Button>

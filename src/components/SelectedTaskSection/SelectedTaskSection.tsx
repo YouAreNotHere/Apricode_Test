@@ -1,30 +1,44 @@
 import {taskStore, Task} from "../../stores/Root.Store";
 import SelectedTaskItem from "../SelectedTaskItem/SelectedTaskItem"
-import React, { useMemo } from 'react';
+import React, { useEffect} from 'react';
 import { observer } from 'mobx-react-lite';
 import selectedTaskItem from '../SelectedTaskItem/SelectedTaskItem';
+import { Button } from '../../shared';
+import UpdateButton from '../../shared/Button/UpdateButton';
+import { UpdateTask } from '../UpdateTask/UpdateTask';
 
-const SelectedTaskSection: any  = observer(({rootTasks= []}) => {
+const SelectedTaskSection: any  = observer((): any => {
 
-    const {checkedTasksLines, tasks, selectedTask} = taskStore;
-    console.log(selectedTask);
+    const {checkedTasksLines, tasks, selectedTaskAndTitle} = taskStore;
+    const [isEditing, setIsEditing] = React.useState(false);
+    if (!tasks.some((storeTask: any) => storeTask.id === selectedTaskAndTitle?.task?.id)) taskStore.addToSelected();
 
     return (
-      <div>
-        {selectedTask ? (
+      <>
+        {isEditing ? (
           <>
-            <h2 className="task-title">
-              {selectedTask.title}
-            </h2>
-            <br />
-            <p className="task-title">
-              {selectedTask.task?.text}
-            </p>
-
+            <UpdateTask task={selectedTaskAndTitle} setIsEditing = {setIsEditing} isEditind = {isEditing} />
           </>
+        ) : selectedTaskAndTitle ? (
+          <div>
+            <div className="title-update-container">
+              <h2 className="task-title">{selectedTaskAndTitle?.title}</h2>
+              <Button
+                className="update-task-button"
+                onClickHandler={() => setIsEditing(true)}
+              >
+                <UpdateButton />
+              </Button>
+            </div>
+            <br />
+            <p className="task-title">{selectedTaskAndTitle?.task?.text}</p>
+            <div>
+
+            </div>
+          </div>
         ) : null}
-      </div>
-    )
+      </>
+    );
 })
 
 export default SelectedTaskSection;

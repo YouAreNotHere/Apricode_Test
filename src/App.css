@@ -18,13 +18,20 @@
   margin-right: 50px;
   margin-top: 20px;
   padding: 24px;
-  width: 30%;
+  padding-bottom: 15px;
+  width: 40%;
   border-radius: 24px;
   box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
 }
 
 .task-title{
   text-align: center;
+}
+
+.title-update-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main-title {
@@ -42,18 +49,6 @@
   background: transparent;
   border: 0;
   opacity: 1;
-}
-
-.update-task-button{
-  padding: 0;
-}
-
-button.remove-task-button {
-  background-color: crimson;
-}
-
-button.remove-task-button:hover {
-  background-color: #811329;
 }
 
 .delete-icon::before,
@@ -84,6 +79,53 @@ button.remove-task-button:hover {
   transform: rotate(90deg);
 }
 
+button.remove-task-button,
+.cancel-task-button{
+  background-color: crimson;
+}
+
+button.remove-task-button:hover,
+.cancel-task-button:hover{
+  background-color: red;
+}
+
+button.remove-task-button:active,
+.cancel-task-button:active{
+  background-color: darkred;
+}
+
+
+
+.create-task-button,
+.suggest-task-button{
+  background: #4BA221;
+}
+
+.create-task-button:hover,
+.suggest-task-button:hover{
+  background: greenyellow;
+}
+
+.create-task-button:active,
+.suggest-task-button:active{
+  background: green;
+}
+
+.update-task-button{
+  padding: 0;
+  background: cadetblue;
+  height: 23px;
+  width: 23px;
+}
+
+.update-task-button:hover{
+  background: cornflowerblue;
+}
+
+.update-task-button:active{
+  background: darkblue;
+}
+
 .button-container {
   position: relative;
   margin: 0 4px;
@@ -100,13 +142,23 @@ button.remove-task-button:hover {
   padding: 0;
 }
 
-/*.numbered li {*/
-/*  counter-increment: list-counter; !* Увеличение счетчика для каждого элемента *!*/
-/*  position: relative; !* Позволяет позиционировать элемент относительно себя *!*/
-/*}*/
+.main-task-button{
+  background: goldenrod;
+}
 
-/*.numbered li::before {*/
-/*  content: counter(list-counter) ". "; !* Выводим номер перед пунктом *!*/
-/*  position: absolute; !* Абсолютное позиционирование для номера *!*/
-/*  left: -1.5em; !* Рекомендуется настроить смещение *!*/
-/*}*/
+.main-task-button:hover{
+  background: gold;
+}
+
+.main-task-button:active{
+  background: orange;
+}
+
+.cancel-task-button{
+  width: 23px;
+  height: 23px;
+}
+
+.suggest-task-button{
+  margin-left: 30px;
+}
