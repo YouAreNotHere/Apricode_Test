@@ -4,9 +4,10 @@ import {AddTask} from "./components/AddTask/AddTask";
 import {observer} from "mobx-react-lite";
 import {Button} from "./shared";
 import SelectedTaskSection from './components/SelectedTaskSection/SelectedTaskSection';
+import "./App.scss"
 
 const App = observer(() => {
-    const {tasks, rootId, selectedTaskAndTitle} = taskStore;
+    const {tasks,  selectedTaskAndTitle} = taskStore;
     const {idToAdd} = showAddTask;
 
     const rootTasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
@@ -15,10 +16,10 @@ const App = observer(() => {
         <div className="app-container">
             <div className="interaction-task-container">
                 <h2 className='main-title'>Список задач</h2>
-                {idToAdd === -1 ? (
+                {idToAdd === "-1" ? (
                     <div className='content'>
                         <TaskList tasks={rootTasks}/>
-                        <AddTask id={rootId} parentId={null}/>
+                        <AddTask  parentId={null}/>
                     </div>
                 ) : (
                     <div className='content'>
@@ -26,12 +27,12 @@ const App = observer(() => {
                         <Button
                             className={"main-task-button"}
                             text={"+ Добавить задачу"}
-                            onClickHandler={() => showAddTask.changeIdToAdd({id: -1})}
+                            onClickHandler={() => showAddTask.changeIdToAdd(String(-1))}
                         />
                     </div>
                 )}
             </div>
-          <div className = {selectedTaskAndTitle?.task ? "selected-task-container": undefined}>
+          <div className = {selectedTaskAndTitle ? "selected-task-container": undefined}>
             <SelectedTaskSection/>
           </div>
         </div>

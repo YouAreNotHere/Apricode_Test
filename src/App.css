@@ -1,164 +1,17 @@
-.app-container{
-  display: flex;
-  justify-content: space-between;
-}
+/* Error: Can't find stylesheet to import.
+ *   ,
+ * 1 | @import 'src/shared/Styles/variables';
+ *   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ *   '
+ *   App.scss 1:9  root stylesheet */
 
-.interaction-task-container{
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 20px;
-  padding: 24px;
-  width: fit-content;
-  border-radius: 24px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
-}
-
-.selected-task-container{
-  margin-left: 50px;
-  margin-right: 50px;
-  margin-top: 20px;
-  padding: 24px;
-  padding-bottom: 15px;
-  width: 40%;
-  border-radius: 24px;
-  box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
-}
-
-.task-title{
-  text-align: center;
-}
-
-.title-update-container{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.main-title {
-  margin: 0 0 24px 0;
-}
-
-.create-task-button,
-.suggest-task-button,
-.cancel-task-button
-.update-task-button{
-  width: 23px;
-  height: 23px;
-  position: relative;
-  color: transparent;
-  background: transparent;
-  border: 0;
-  opacity: 1;
-}
-
-.delete-icon::before,
-.delete-icon::after,
-.create-icon::before,
-.create-icon::after,
-.update-task-button:before,
-.update-task-button:after{
-  content: "";
-  position: absolute;
+body::before {
+  font-family: "Source Code Pro", "SF Mono", Monaco, Inconsolata, "Fira Mono",
+      "Droid Sans Mono", monospace, monospace;
+  white-space: pre;
   display: block;
-  width: 10px;
-  height: 2px;
-  background: white;
-  top: calc(50% - 1px);
-  left: calc(50% - 5px);
-}
-
-.delete-icon::before{
-  transform: rotate(45deg); /* Смещение влево на половину ширины */
-}
-
-.delete-icon::after{
-  transform: rotate(-45deg); /* Смещение вверх на половину высоты */
-}
-
-.create-icon::after{
-  transform: rotate(90deg);
-}
-
-button.remove-task-button,
-.cancel-task-button{
-  background-color: crimson;
-}
-
-button.remove-task-button:hover,
-.cancel-task-button:hover{
-  background-color: red;
-}
-
-button.remove-task-button:active,
-.cancel-task-button:active{
-  background-color: darkred;
-}
-
-
-
-.create-task-button,
-.suggest-task-button{
-  background: #4BA221;
-}
-
-.create-task-button:hover,
-.suggest-task-button:hover{
-  background: greenyellow;
-}
-
-.create-task-button:active,
-.suggest-task-button:active{
-  background: green;
-}
-
-.update-task-button{
-  padding: 0;
-  background: cadetblue;
-  height: 23px;
-  width: 23px;
-}
-
-.update-task-button:hover{
-  background: cornflowerblue;
-}
-
-.update-task-button:active{
-  background: darkblue;
-}
-
-.button-container {
-  position: relative;
-  margin: 0 4px;
-}
-
-.button-wrapper{
-  display: flex;
-  justify-content: space-between;
-}
-
-.numbered {
-  list-style-type: none; /* Убираем стандартные точки */
-  counter-reset: list-counter; /* Инициализация счетчика */
-  padding: 0;
-}
-
-.main-task-button{
-  background: goldenrod;
-}
-
-.main-task-button:hover{
-  background: gold;
-}
-
-.main-task-button:active{
-  background: orange;
-}
-
-.cancel-task-button{
-  width: 23px;
-  height: 23px;
-}
-
-.suggest-task-button{
-  margin-left: 30px;
+  padding: 1em;
+  margin-bottom: 1em;
+  border-bottom: 2px solid black;
+  content: "Error: Can't find stylesheet to import.\a   \2577 \a 1 \2502  @import 'src/shared/Styles/variables';\a   \2502          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\a   \2575 \a   App.scss 1:9  root stylesheet";
 }

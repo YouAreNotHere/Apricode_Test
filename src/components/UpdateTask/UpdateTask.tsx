@@ -1,23 +1,20 @@
 import React, {useState, useEffect} from 'react';
 import {observer} from "mobx-react-lite";
-import {taskStore, showAddTask, Task } from "../../stores/Root.Store";
+import { taskStore, showAddTask, Task, TaskAndTitle } from '../../stores/Root.Store';
 import {Button} from "../../shared";
-import "../../App.css"
-import "./UpdateTask.css"
-import '../AddTask/AddTask.css';
-import SuggestButton from '../../shared/Button/SuggestButton';
+import "../../App.scss"
+import "./UpdateTask.scss"
+import '../AddTask/AddTask.scss';
 
 interface Props{
-  id?:number | string | null,
-  index?: number | string | null,
-  parentId?: number | null |string,
-  ownNumber?: number,
-  setOwnNumber?: Function,
+  taskAndTitle: TaskAndTitle | null;
+  setIsEditing: Function,
+  isEditing: boolean;
 }
 
-export const UpdateTask = observer(({task, setIsEditing, isEditind}: any) => {
-  const [text, setText] = useState(task.text);
-  const [title, setTitle] = useState(task.title);
+export const UpdateTask = observer(({taskAndTitle, setIsEditing, isEditing}: Props ) => {
+  const [text, setText] = useState(taskAndTitle?.task?.text);
+  const [title, setTitle] = useState(taskAndTitle?.title);
 
   useEffect(() => {
     const addTaskHandler = (e: KeyboardEvent) => {
@@ -35,17 +32,17 @@ export const UpdateTask = observer(({task, setIsEditing, isEditind}: any) => {
     return () => window.removeEventListener('keydown', addTaskHandler);
   });
 
-
   const onClickSuggestHandler = () => {
-    taskStore.updateTask({text, title, task});
-    console.log("Тык")
+    taskStore.updateTask({text, title, taskAndTitle});
     setText("");
-    setIsEditing(!isEditind)
+    setIsEditing(!isEditing)
+    taskStore.addToSelected({task:{...taskAndTitle, text}, title});
   };
 
   const onClickCancelHandler = () => {;
-    setIsEditing(!isEditind)
+    setIsEditing(!isEditing)
   }
+
 
   return (
     <div className="input-container">

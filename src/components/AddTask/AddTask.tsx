@@ -2,14 +2,14 @@ import React, {useState, useEffect} from 'react';
 import {observer} from "mobx-react-lite";
 import {taskStore, showAddTask } from "../../stores/Root.Store";
 import {Button} from "../../shared";
-import "../../App.css"
-import './AddTask.css';
+import "../../App.scss"
+import './AddTask.scss';
 import SuggestButton from '../../shared/Button/SuggestButton';
 
 interface Props{
     id?:number | string | null,
     index?: number | string | null,
-    parentId?: number | null |string,
+    parentId?:  null |string | undefined,
     ownNumber?: number,
     setOwnNumber?: Function,
 }
@@ -34,13 +34,13 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
     });
 
     const onClickSuggestHandler = () => {
-        taskStore.addTask({ title: "Задача", text, parentId, subtasks: [], isFocus: false});
+        taskStore.addTask({ title: "Задача", text, parentId, subtasks: []});
         setText("");
-        showAddTask.changeIdToAdd({idToAdd: null});
+        showAddTask.changeIdToAdd(null);
     };
 
     const onClickCancelHandler = () => {
-        showAddTask.changeIdToAdd({idToAdd: null})
+        showAddTask.changeIdToAdd( null)
     }
 
     return (
@@ -48,7 +48,6 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
             <input className='add-task__input' autoFocus onChange={(e) => setText(e.target.value)} value={text} />
             <div className={"button-container"} title={"Добавить выбранное задание"}>
                 <Button onClickHandler={onClickSuggestHandler} className={"suggest-task-button"}>
-                    {/*<span className="create-icon"></span>*/}
                     <SuggestButton/>
                 </Button>
             </div>

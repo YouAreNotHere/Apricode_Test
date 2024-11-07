@@ -1,20 +1,25 @@
 import { makeAutoObservable , runInAction} from "mobx";
 
 export interface Task {
-    title: string | null;
+    title: string;
     text: string;
-    id?: number | string,
-    parentId?: number | string,
+    id?: string | null | undefined,
+    parentId?: string| undefined | null;
     subtasks?: any;
+}
+
+export interface TaskAndTitle{
+    task? : Task | undefined;
+    title?: string | undefined;
 }
 
 class TaskStore {
     tasks: Task[] = [];
     checkedTasksLines: string[][] = [];
-    selectedTasksIds: any = [];
-    selectedTaskAndTitle: any = null;
+    selectedTasksIds: string[] = [];
+    selectedTaskAndTitle: TaskAndTitle | null = null;
     checkedTasksIds: Set<string> = new Set();
-    updatedTaskId: any;
+    updatedTaskId: string | undefined;
 
     constructor() {
         makeAutoObservable(this);
@@ -43,7 +48,6 @@ class TaskStore {
     addTask(task: Task) {
         let newTasks : Task[];
         if (!!task.parentId){
-            console.log("Create child")
             task = {...task, id : this.generateId()}
             newTasks = this.tasks.map((storeTask): Task => {
                 if (storeTask.id === task.parentId) {
@@ -61,23 +65,54 @@ class TaskStore {
     }
 
     removeTask(task: Task) {
-        const newTasks : Task[] = this.tasks.map((storeTask: Task): any => {
-            if (storeTask.id === task.id) {
-                return null;
-            }
-            if (storeTask.id === task.parentId) {
-                return {
-                    ...storeTask,
-                    subtasks: storeTask.subtasks.filter((storeSubtask: number | string) => storeSubtask !== task.id)
-                };
-            }
+     let newTasks : Task[] = [...this.tasks];
+     let arrOfIds: string[] = [];
 
-            return storeTask;
-        })
-            .filter((storeTask: Task) => storeTask !== null);
-        this.tasks = newTasks;
-        this.saveTasks();
+    const deleteSubtasks = (subtasks: string[], tasks: Task[]) =>{
+        const subtasksObjects = subtasks.map((subtaskId: any) => (
+            tasks.find((storeTask: Task) => storeTask.id === subtaskId)
+          )
+        )
+        subtasksObjects.map((currentSubtask: any) => {
+            if (currentSubtask.subtasks.length === 0) {
+                arrOfIds.push(currentSubtask.id);
+            }else{
+                deleteSubtasks(currentSubtask.subtasks,tasks)
+            }
+        } )
+
     }
+
+    newTasks = this.tasks.map((storeTask: Task): any  => {
+        if (storeTask.id === task.id) {
+            return null;
+        }
+        if (task?.subtasks.some((subtask : string) => subtask === storeTask.id)) {
+            return null;
+        }
+        if (task.subtasks.length > 0){
+            deleteSubtasks(task.subtasks,newTasks)
+        }
+        if (storeTask.id === task.parentId) {
+            return {
+                ...storeTask,
+                subtasks: storeTask.subtasks.filter((storeSubtask: number | string) => storeSubtask !== task.id)
+            };
+        }
+
+        return storeTask;
+    })
+        .filter((storeTask: any) => {
+             return storeTask !== null
+        }).filter((storeTask: any) =>{
+            return arrOfIds.some((id: string) => id !== storeTask?.id);
+        });
+    this.tasks = newTasks;
+    if (newTasks.length === 0) localStorage.clear();
+    this.saveTasks();
+        if (!this.tasks.some((storeTask: Task) => storeTask.id === this.selectedTaskAndTitle?.task?.id)) this.addToSelected();
+}
+
 
     checkTask(task: Task) {
         const newCheckedTasksIds = new Set(this.checkedTasksIds);
@@ -123,28 +158,22 @@ class TaskStore {
 
     addToSelected( selectedTaskAndTitle: any = null ){
         runInAction(() => {
+            console.log(this.selectedTaskAndTitle);
+            console.log(selectedTaskAndTitle);
             this.selectedTaskAndTitle = selectedTaskAndTitle;
-        })
+
+       })
     }
 
-    deleteFromSelected(){
-        runInAction(() => {
-            this.selectedTaskAndTitle = null;
-        })
-    }
-
-
-    updateTask({text, title, task}: any) {
-        let newTasks;
+    updateTask({text, title, taskAndTitle}: {text: string | undefined, title: string | undefined, taskAndTitle: any}) {
+        let newTasks : any;
         newTasks = this.tasks.map((storeTask: Task) => {
-            if (storeTask.id !== task.task.id){
+            if (storeTask.id !== taskAndTitle.task.id){
                return storeTask
             }else{
-                console.log("Huy")
                return {...storeTask, title, text }
             }
         })
-        console.log(newTasks)
         this.tasks = [...newTasks]
         this.saveTasks();
     }
@@ -157,15 +186,15 @@ class ShowAddTask{
 
     idToAdd: number | undefined | string | null;
 
-    changeIdToAdd = ({id}: {id: number | undefined | string | null}) => {
+    changeIdToAdd = (id: string | null = null) => {
         this.idToAdd = id;
     }
 }
 
-export const taskStore: any = new TaskStore();
-export const showAddTask: any = new ShowAddTask();
+export const taskStore= new TaskStore();
+export const showAddTask= new ShowAddTask();
 
 export class RootStore {
-    taskStore: any  = new TaskStore();
+    taskStore  = new TaskStore();
 }
 

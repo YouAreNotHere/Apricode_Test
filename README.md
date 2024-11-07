@@ -1,46 +1,93 @@
-# Getting Started with Create React App
+Приветствую!
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# React + MobX + SASS Project
 
-## Available Scripts
+  Этот проект является примером приложения, написанного на React с использованием MobX для управления состоянием и SASS для стилей. Он настроен для работы с Webpack.
 
-In the project directory, you can run:
+## Установка
 
-### `npm start`
+**Склонируйте репозиторий**    
+  git clone https://github.com/YouAreNotHere/Apricode_Test.git
+  cd my-app
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+**Установите зависимости**
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+  Убедитесь, что у вас установлены [Node.js](https://nodejs.org/en/) и [npm](https://www.npmjs.com/get-npm). 
+  Затем выполните команду:    npm install
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Скрипты
 
-### `npm run build`
+В проекте определены следующие команды, которые можно использовать:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+  - `npm run start` - Запускает приложение в режиме разработки.
+  - `npm run build` - Создает оптимизированную сборку приложения для продакшн.
+  - `npm test` - Запускает тесты.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Настройка Webpack
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+  Проект использует Webpack для сборки. Основные конфигурационные файлы находятся в папке `node_modules/webpack/`:
 
-### `npm run eject`
+  - **webpack.config.js** - Основной конфигурационный файл Webpack.
+  - **webpack.dev.js** - Конфигурация для разработки.
+  - **webpack.prod.js** - Конфигурация для продакшн.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### Основные зависимости
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+В проекте используются следующие зависимости:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **React** - Основная UI библиотека.
+- **MobX** - Менеджер состояния.
+- **SASS** - Препроцессор CSS.
+- **Webpack** - Сборщик модулей.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Структура проекта
 
-## Learn More
+  Проект имеет следующую структуру:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+  /my-app
+  ├── /src
+  │   ├── /components React компоненты
+  │   ├── /stores - MobX store
+  │   ├── /shared - Общеиспользуемые подкомпоненты 
+  │   └── index.js - Основной файл приложения
+  ├── /public - Статические файлы
+  ├── /node-modules - библиотеки для работы приложения
+  └── package.json - Зависимости и скрипты
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Запуск проекта
+
+  После установки зависимостей вы можете запустить проект с помощью команды: `npm run start`.
+
+  Автоматически откроется браузер с вкладкой по адресу [http://localhost:3000]
+
+## Стилизация с помощью SASS
+
+  Для работы с SASS создайте файлы с расширением `.scss` в папке `src/shared/styles`. 
+  Например, `styles.scss`. 
+
+## Использование MobX
+
+  Создайте ваши MobX store'ы в папке `src/stores`. Пример базового store'a:
+  
+  javascript
+
+    import { makeAutoObservable } from "mobx";
+
+    class CounterStore {
+    count = 0;
+
+    constructor() {
+      makeAutoObservable(this);
+    }
+
+    increment() {
+      this.count++;
+    }
+
+    decrement() {
+      this.count--;
+    }
+    }
+
+    export const counterStore = new CounterStore();

@@ -1,23 +1,23 @@
 import {taskStore, Task} from "../../stores/Root.Store";
-import SelectedTaskItem from "../SelectedTaskItem/SelectedTaskItem"
-import React, { useEffect} from 'react';
+import { useEffect, useState } from 'react';
 import { observer } from 'mobx-react-lite';
-import selectedTaskItem from '../SelectedTaskItem/SelectedTaskItem';
 import { Button } from '../../shared';
 import UpdateButton from '../../shared/Button/UpdateButton';
 import { UpdateTask } from '../UpdateTask/UpdateTask';
 
-const SelectedTaskSection: any  = observer((): any => {
+const SelectedTaskSection  = observer(() => {
 
     const {checkedTasksLines, tasks, selectedTaskAndTitle} = taskStore;
-    const [isEditing, setIsEditing] = React.useState(false);
-    if (!tasks.some((storeTask: any) => storeTask.id === selectedTaskAndTitle?.task?.id)) taskStore.addToSelected();
+    const [isEditing, setIsEditing] = useState(false);
 
     return (
       <>
         {isEditing ? (
           <>
-            <UpdateTask task={selectedTaskAndTitle} setIsEditing = {setIsEditing} isEditind = {isEditing} />
+            <UpdateTask
+              taskAndTitle={selectedTaskAndTitle}
+              setIsEditing = {setIsEditing}
+              isEditing = {isEditing} />
           </>
         ) : selectedTaskAndTitle ? (
           <div>

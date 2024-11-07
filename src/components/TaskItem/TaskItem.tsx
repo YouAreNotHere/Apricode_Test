@@ -1,19 +1,27 @@
-import React, {useState, useMemo, useEffect} from "react";
+import  {useState, useMemo, useEffect} from "react";
 import {observer} from "mobx-react-lite";
 import {taskStore, Task, showAddTask} from "../../stores/Root.Store";
 import {Button} from "../../shared/Button/Button";
-import "../../App.css"
-import "../../shared/Button/Button.css"
-import './TaskItem.css';
+import "../../App.scss"
+import "../../shared/Button/Button.scss"
+import './TaskItem.scss';
 import {AddTask} from "../AddTask/AddTask";
-import UpdateButton from '../../shared/Button/UpdateButton';
-import { UpdateTask } from '../UpdateTask/UpdateTask';
+
+interface Props{
+    task: any,
+    index: string,
+    childIndex: string | null | undefined | number,
+    offset: number | undefined,
+    ancestorsIds: string[],
+}
 
 
-const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}: any ) => {
-    const {checkedTasksLines, tasks, selectedTaskAndTitle, checkedTasksIds, deleteFromSelected} = taskStore;
-    const currentFocus = checkedTasksLines.some((tasksLine: string[]) => tasksLine.includes(task.id));
-    const [isExpanded, setExpanded] = React.useState(true);
+const TaskItem:  React.FC<React.PropsWithChildren<any>> = ({task, index, childIndex, offset = 0, ancestorsIds = []}: Props ) => {
+    const {checkedTasksLines, tasks, selectedTaskAndTitle, checkedTasksIds} = taskStore;
+    if (task.id != null) {
+        const currentFocus = checkedTasksLines.some((tasksLine: string[]) => tasksLine.includes(task.id));
+    }
+    const [isExpanded, setExpanded] = useState(true);
 
     let title: string;
 
@@ -34,17 +42,14 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
     },[childIndex, index]);
 
     const subtasks = useMemo(() =>
-            task.subtasks.map((subtaskId: any) => tasks.find((storeTask: Task) => storeTask.id === subtaskId)),
+            task.subtasks.map((subtaskId: string) => tasks.find((storeTask: Task) => storeTask.id === subtaskId)),
         [task.subtasks, tasks]
     );
 
 
     return (
       <div className="task-item" style={{ marginLeft: offset }}>
-          {isTaskUpdated ? (
-            <UpdateTask task = {task}/>
-          ):
-        isTaskAdding ? (
+          {isTaskAdding ? (
           <AddTask parentId={task.id} />
         ) : (
           <div className={'task-item__content'}>
@@ -62,9 +67,6 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
                 type="checkbox"
                 onChange={(e) => {
                   taskStore.checkTask(task);
-                  currentFocus
-                    ? taskStore.deleteFromSelected(task.id)
-                    : taskStore.addToSelected(task.id);
                 }}
               />
             </label>
@@ -78,8 +80,9 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
               <div className={'button-container'} title={'Добавить задание'}>
                 <Button
                   className="create-task-button"
-                  onClickHandler={() =>
-                    showAddTask.changeIdToAdd({ id: task.id })
+                  onClickHandler={() => {
+                      showAddTask.changeIdToAdd(task.id )
+                  }
                   }
                 >
                   <span className="create-icon"></span>
@@ -101,7 +104,7 @@ const TaskItem: any = ({task, index, childIndex, offset = 0, ancestorsIds = []}:
         )}
         {isExpanded ? (
           <div>
-            {subtasks?.map((subtask: any, childIndex: number) => (
+            {subtasks?.map((subtask: string, childIndex: number) => (
               <TaskItem
                 key={task.id}
                 task={subtask}

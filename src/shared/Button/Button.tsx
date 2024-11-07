@@ -1,5 +1,5 @@
-import "../../App.css"
-import './Button.css';
+import "../../App.scss"
+import './Button.scss';
 import React, {ReactNode} from "react";
 
 interface IButton{
