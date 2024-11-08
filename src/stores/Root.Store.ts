@@ -1,4 +1,4 @@
-import { makeAutoObservable , runInAction} from "mobx";
+import { makeAutoObservable, remove, runInAction } from 'mobx';
 
 export interface Task {
     title: string;
@@ -65,23 +65,7 @@ class TaskStore {
     }
 
     removeTask(task: Task) {
-     let newTasks : Task[] = [...this.tasks];
-     let arrOfIds: string[] = [];
-
-    const deleteSubtasks = (subtasks: string[], tasks: Task[]) =>{
-        const subtasksObjects = subtasks.map((subtaskId: any) => (
-            tasks.find((storeTask: Task) => storeTask.id === subtaskId)
-          )
-        )
-        subtasksObjects.map((currentSubtask: any) => {
-            if (currentSubtask.subtasks.length === 0) {
-                arrOfIds.push(currentSubtask.id);
-            }else{
-                deleteSubtasks(currentSubtask.subtasks,tasks)
-            }
-        } )
-
-    }
+     let newTasks : Task[];
 
     newTasks = this.tasks.map((storeTask: Task): any  => {
         if (storeTask.id === task.id) {
@@ -90,8 +74,8 @@ class TaskStore {
         if (task?.subtasks.some((subtask : string) => subtask === storeTask.id)) {
             return null;
         }
-        if (task.subtasks.length > 0){
-            deleteSubtasks(task.subtasks,newTasks)
+        if (!this.tasks.some((currentStoreTask) => currentStoreTask.id === storeTask.parentId)) {
+            if (storeTask.parentId !== null) return null;
         }
         if (storeTask.id === task.parentId) {
             return {
@@ -101,14 +85,11 @@ class TaskStore {
         }
 
         return storeTask;
-    })
-        .filter((storeTask: any) => {
-             return storeTask !== null
-        }).filter((storeTask: any) =>{
-            return arrOfIds.some((id: string) => id !== storeTask?.id);
+    }).filter((storeTask: any) => {
+            return storeTask !== null
         });
+
     this.tasks = newTasks;
-    if (newTasks.length === 0) localStorage.clear();
     this.saveTasks();
         if (!this.tasks.some((storeTask: Task) => storeTask.id === this.selectedTaskAndTitle?.task?.id)) this.addToSelected();
 }
@@ -158,10 +139,7 @@ class TaskStore {
 
     addToSelected( selectedTaskAndTitle: any = null ){
         runInAction(() => {
-            console.log(this.selectedTaskAndTitle);
-            console.log(selectedTaskAndTitle);
             this.selectedTaskAndTitle = selectedTaskAndTitle;
-
        })
     }
 
