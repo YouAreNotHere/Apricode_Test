@@ -1,16 +1,18 @@
 import { Task, taskStore, showAddTask} from "./stores/Root.Store";
 import TaskList from "./components/TaskList/TaskList";
-import {AddTask} from "./components/AddTask/AddTask";
+import FilterBar from './components/FilterBar/FilterBar';
+import AddTask from "./components/AddTask/AddTask";
 import {observer} from "mobx-react-lite";
 import {Button} from "./shared";
 import SelectedTaskSection from './components/SelectedTaskSection/SelectedTaskSection';
-import "./App.scss"
+import "./App.scss";
 
 const App = observer(() => {
-    const {tasks,  selectedTaskAndTitle} = taskStore;
+    const {tasks,  selectedTaskAndTitle, checkedTasksIds} = taskStore;
     const {idToAdd} = showAddTask;
 
     const rootTasks = tasks.filter((storeTask: Task) => storeTask.parentId === null);
+    const activeTasksLength = tasks.filter((task)=> task?.id && !checkedTasksIds.has(task.id)).length;
 
     return (
         <div className="app-container">
@@ -24,17 +26,36 @@ const App = observer(() => {
                 ) : (
                     <div className='content'>
                         <TaskList tasks={rootTasks}/>
+                      <div className={"app-container__buttons-wrapper"}>
                         <Button
-                            className={"main-task-button"}
-                            text={"+ Добавить задачу"}
-                            onClickHandler={() => showAddTask.changeIdToAdd(String(-1))}
+                          className={"main-task-button"}
+                          text={"Добавить задачу"}
+                          onClickHandler={() => showAddTask.changeIdToAdd(String(-1))}
                         />
+                        <Button
+                          className={`delete-tasks-button ${checkedTasksIds.size < 1 && "hidden"}`}
+                          onClickHandler={()=> taskStore.deleteCheckedTasks()}
+                          text={"Удалить выполненные"}
+                        />
+                      </div>
+                      <FilterBar/>
+                      <div className={"task-counter"}>
+                        <p>Заданий осталось: {activeTasksLength}</p>
+                      </div>
                     </div>
                 )}
             </div>
-          <div className = {selectedTaskAndTitle ? "selected-task-container": undefined}>
-            <SelectedTaskSection/>
-          </div>
+          {selectedTaskAndTitle &&
+            <div
+              className = {"selected-task-container"}
+              onClick={(e)=>{
+                e.preventDefault();
+                taskStore.addToSelected();
+              }}
+            >
+              <SelectedTaskSection/>
+            </div>
+          }
         </div>
 
     );

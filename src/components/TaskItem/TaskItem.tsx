@@ -1,11 +1,11 @@
 import  {useState, useMemo, useEffect} from "react";
 import {observer} from "mobx-react-lite";
-import {taskStore, Task, showAddTask} from "../../stores/Root.Store";
+import {taskStore, Task, showAddTask, filterTasks} from "../../stores/Root.Store";
 import {Button} from "../../shared/Button/Button";
 import "../../App.scss"
 import "../../shared/Button/Button.scss"
 import './TaskItem.scss';
-import {AddTask} from "../AddTask/AddTask";
+import AddTask from "../AddTask/AddTask";
 
 interface Props{
     task: any,
@@ -17,10 +17,8 @@ interface Props{
 
 
 const TaskItem:  React.FC<React.PropsWithChildren<any>> = ({task, index, childIndex, offset = 0, ancestorsIds = []}: Props ) => {
-    const {checkedTasksLines, tasks, selectedTaskAndTitle, checkedTasksIds} = taskStore;
-    if (task.id != null) {
-        const currentFocus = checkedTasksLines.some((tasksLine: string[]) => tasksLine.includes(task.id));
-    }
+    const {tasks, selectedTaskAndTitle, checkedTasksIds} = taskStore;
+    const currentFiler = filterTasks.currentFilter;
     const [isExpanded, setExpanded] = useState(true);
 
     let title: string;
@@ -32,7 +30,6 @@ const TaskItem:  React.FC<React.PropsWithChildren<any>> = ({task, index, childIn
     }if (task.title !== "Задача") title = task.title;
 
     const isTaskAdding = showAddTask.idToAdd === task.id;
-    const isTaskUpdated = taskStore.updatedTaskId === task.id;
 
 
     useEffect(()=> {
@@ -46,30 +43,36 @@ const TaskItem:  React.FC<React.PropsWithChildren<any>> = ({task, index, childIn
         [task.subtasks, tasks]
     );
 
+    if (currentFiler === "done" && !checkedTasksIds.has(task.id)) return null;
+    if (currentFiler === "active" && checkedTasksIds.has(task.id)) return null;
 
-    return (
+  return (
       <div className="task-item" style={{ marginLeft: offset }}>
           {isTaskAdding ? (
           <AddTask parentId={task.id} />
         ) : (
           <div className={'task-item__content'}>
-            <span
-              onClick={() => {
-                setExpanded(!isExpanded);
-              }}
-              className={isExpanded ? 'arrow-up' : 'arrow'}
-            >
-              &gt;
-            </span>
-            <label>
-              <input
-                checked={checkedTasksIds.has(task.id)}
-                type="checkbox"
-                onChange={(e) => {
-                  taskStore.checkTask(task);
+            <div className={"task-item__labels-wrapper"}>
+              <div
+                onClick={() => {
+                  setExpanded(!isExpanded);
                 }}
-              />
-            </label>
+                className={`arrow${subtasks.length>0 ? (isExpanded ? ' up' : '') : ' hidden'}`}>
+              <svg width="24px" height="24px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="24" height="24" fill="transparent"/>
+                <path d="M7 14.5L12 9.5L17 14.5" stroke="black" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+              <label>
+                <input
+                  checked={checkedTasksIds.has(task.id)}
+                  type="checkbox"
+                  onChange={(e) => {
+                    taskStore.checkTask(task);
+                  }}
+                />
+              </label>
+            </div>
             <div
               className={'task-item__title'}
               onClick={() => taskStore.addToSelected({ task, title })}
@@ -103,19 +106,20 @@ const TaskItem:  React.FC<React.PropsWithChildren<any>> = ({task, index, childIn
           </div>
         )}
         {isExpanded ? (
-          <div>
+          <ul>
             {subtasks?.map((subtask: string, childIndex: number) => (
-              <TaskItem
-                key={task.id}
-                task={subtask}
-                childIndex={childIndex + 1}
-                index={title}
-                offset={offset + 15}
-                parentId={task.id}
-                ancestorsIds={[...ancestorsIds, task.id]}
-              />
+              <li key={task.id}>
+                <TaskItem
+                  task={subtask}
+                  childIndex={childIndex + 1}
+                  index={title}
+                  offset={10}
+                  parentId={task.id}
+                  ancestorsIds={[...ancestorsIds, task.id]}
+                />
+              </li>
             ))}
-          </div>
+          </ul>
         ) : null}
       </div>
     );

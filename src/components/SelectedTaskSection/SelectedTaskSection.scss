@@ -1,0 +1,54 @@
+.selected-task__inner{
+  
+  @media (max-width: 800px) {
+    background-color: white;
+    max-width: 80%;
+    margin: 0 auto;
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 3;
+    position: relative;
+  }
+
+  & .selected-task__button--close{
+    display: none;
+
+    @media (max-width: 800px) {
+      display: flex;
+      position: absolute;
+      right: 20px;
+      margin: 0;
+      padding: 15px;
+      background-color: transparent;
+
+      &:hover{
+
+        &:before,
+        &:after{
+          background-color: gray;
+        }
+      }
+
+      &:before,
+      &:after{
+        content: "";
+        position: absolute;
+        background-color: black;
+        display: block;
+        width: 15px;
+        height: 2px;
+        top: calc(50% - 1px);
+        left: calc(50% - 5px);
+        transition: all 0.3s ease;
+      }
+
+      &:before{
+        transform: rotate(45deg);
+      }
+
+      &:after{
+        transform: rotate(-45deg);
+      }
+    }
+  }
+}

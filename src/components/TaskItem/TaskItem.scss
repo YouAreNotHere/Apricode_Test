@@ -1,26 +1,56 @@
+@import 'src/shared/Styles/variables';
+
 .task-item__content {
     display: flex;
     justify-content: space-between;
-    margin-top: 20px;
+    margin-top: 10px;
 
-    padding-bottom: 8px;
-    border-bottom: 1px solid black;
+    box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+    transition: all 0.3s ease;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover{
+        background: $section-tasks-container;
+    }
+
+    & .task-item__labels-wrapper{
+        display: flex;
+        align-items: center;
+        margin-right: 5px;
+    }
 }
 
-.task-item__title,
-.task-item__text {
+.task-item__title {
     margin-right: 30px;
 }
 
-.arrow {
-    font-size: 24px;
-    color: black;
-    margin-top: -7px;
+.task-item__title{
+    width: 100%;
+    padding: 10px;
 }
 
-.arrow-up {
-    font-size: 24px;
-    color: black;
-    margin-top: -5px;
-    transform: rotate(-90deg);
+.arrow {
+    transform: rotate(0deg);
+    width: 24px;
+    height: 24px;
+    transition: all 0.3s ease;
+
+    &:hover{
+        & svg{
+            opacity: 0.6;
+            & path{
+                stroke: black;
+            }
+        }
+    }
+
+    &.up{
+        transform: rotate(-180deg);
+    }
+
+    &.hidden{
+        display: none;
+    }
 }

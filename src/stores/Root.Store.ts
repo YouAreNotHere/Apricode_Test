@@ -1,4 +1,4 @@
-import { makeAutoObservable, remove, runInAction } from 'mobx';
+import { makeAutoObservable, runInAction } from 'mobx';
 
 export interface Task {
     title: string;
@@ -27,14 +27,24 @@ class TaskStore {
     }
 
     loadTasks() {
+
         const storedTasks = localStorage.getItem('tasks');
         if (storedTasks) {
             this.tasks = JSON.parse(storedTasks);
+        }
+
+        const storedIds = localStorage.getItem('checkedIds');
+        if (storedIds){
+          this.checkedTasksIds = new Set(JSON.parse(storedIds));
         }
     }
 
     saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(this.tasks));
+    }
+
+    saveCheckedIds(){
+      localStorage.setItem('checkedIds', JSON.stringify(this.checkedTasksIds));
     }
 
     generateId() {
@@ -67,7 +77,8 @@ class TaskStore {
     removeTask(task: Task) {
      let newTasks : Task[];
 
-    newTasks = this.tasks.map((storeTask: Task): any  => {
+    newTasks = this.tasks
+      .map((storeTask: Task): any  => {
         if (storeTask.id === task.id) {
             return null;
         }
@@ -88,6 +99,11 @@ class TaskStore {
     }).filter((storeTask: any) => {
             return storeTask !== null
         });
+
+    newTasks.forEach((storeTask)=> {
+      if (!storeTask.id) return
+      !this.checkedTasksIds.has(storeTask?.id) && this.checkedTasksIds.delete(storeTask.id)
+    });
 
     this.tasks = newTasks;
     this.saveTasks();
@@ -135,9 +151,11 @@ class TaskStore {
         }
 
         this.checkedTasksIds = newCheckedTasksIds;
+        this.saveCheckedIds();
     }
 
     addToSelected( selectedTaskAndTitle: any = null ){
+      console.dir(selectedTaskAndTitle)
         runInAction(() => {
             this.selectedTaskAndTitle = selectedTaskAndTitle;
        })
@@ -155,22 +173,52 @@ class TaskStore {
         this.tasks = [...newTasks]
         this.saveTasks();
     }
+
+    deleteCheckedTasks(){
+      const newTasks = this.tasks
+        .filter((task: Task) => {
+          if (!task.id) return false;
+          return !this.checkedTasksIds.has(task.id)
+        })
+        .map((task: Task) => {
+          return {...task, subtasks: task.subtasks.filter((subtask: string) => !this.checkedTasksIds.has(subtask))}
+          }
+        );
+      this.tasks = [...newTasks];
+      this.checkedTasksIds = new Set();
+      this.saveTasks();
+      this.saveCheckedIds();
+    }
+
 }
 
-class ShowAddTask{
-    constructor() {
-        makeAutoObservable(this);
-    }
+class ShowAddTask {
+  constructor() {
+    makeAutoObservable(this);
+  }
 
-    idToAdd: number | undefined | string | null;
+  idToAdd: number | undefined | string | null;
 
-    changeIdToAdd = (id: string | null = null) => {
-        this.idToAdd = id;
-    }
+  changeIdToAdd(id: string | null = null) {
+    this.idToAdd = id;
+  }
+}
+
+class FilterTasks{
+  constructor() {
+    makeAutoObservable(this)
+  }
+
+  currentFilter: "all" | "done" | "active" = "all";
+
+  changeFilter = (filter: "all" | "done" | "active" = "all") => {
+    this.currentFilter = filter;
+  }
 }
 
 export const taskStore= new TaskStore();
 export const showAddTask= new ShowAddTask();
+export const filterTasks = new FilterTasks();
 
 export class RootStore {
     taskStore  = new TaskStore();

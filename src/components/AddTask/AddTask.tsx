@@ -14,7 +14,7 @@ interface Props{
     setOwnNumber?: Function,
 }
 
-export const AddTask = observer(({index = 1, parentId = null}: Props) => {
+const AddTask = ({index = 1, parentId = null}: Props) => {
     const [text, setText] = useState('');
 
     useEffect(() => {
@@ -45,7 +45,11 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
 
     return (
         <div className="add-task">
-            <input className='add-task__input' autoFocus onChange={(e) => setText(e.target.value)} value={text} />
+            <input
+              className='add-task__input'
+              placeholder={"Название задачи"}
+              autoFocus
+              onChange={(e) => setText(e.target.value)} value={text} />
             <div className={"button-container"} title={"Добавить выбранное задание"}>
                 <Button onClickHandler={onClickSuggestHandler} className={"suggest-task-button"}>
                     <SuggestButton/>
@@ -58,4 +62,6 @@ export const AddTask = observer(({index = 1, parentId = null}: Props) => {
 
         </div>
     );
-});
+};
+
+export default observer(AddTask);

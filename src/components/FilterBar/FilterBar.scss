@@ -1,0 +1,30 @@
+@import 'src/shared/Styles/variables';
+
+.filter-bar{
+  display: flex;
+  margin-top: 20px;
+  gap: 15px;
+
+  & button{
+    padding: 10px 15px;
+    border-radius: 8px;
+
+    &:hover{
+      background-color: #4287f5;
+      color: white;
+    }
+  }
+
+  & .current{
+    background-color: $update-task-button;
+    color: white;
+
+    &:hover{
+      background-color: #4287f5;
+    }
+
+    &:active{
+      background-color: $update-task-button_active;
+    }
+  }
+}

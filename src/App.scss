@@ -3,6 +3,12 @@
 .app-container{
   display: flex;
   justify-content: space-between;
+
+  @media (max-width: 800px) {
+    flex-direction: column;
+    max-width: 90%;
+    margin: 0 auto;
+  }
 }
 
 .interaction-task-container{
@@ -13,9 +19,11 @@
   width: fit-content;
   border-radius: 24px;
   box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
+  min-width: 40%;
 
-  &:hover{
-    background: $section-tasks-container;
+  @media (max-width: 800px) {
+    margin: 20px 0 0 0;
+    min-width: 90%;
   }
 }
 
@@ -23,14 +31,23 @@
   margin-left: 50px;
   margin-right: 50px;
   margin-top: 20px;
-  padding: 24px;
-  padding-bottom: 15px;
+  padding: 24px 24px 15px 24px;
   width: 40%;
   border-radius: 24px;
   box-shadow: rgba(100, 100, 111, 0.2) 0 7px 29px 0;
 
-  &:hover{
-    background: $section-tasks-container;
+
+  @media (max-width: 800px) {
+    position: fixed;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 2;
   }
 }
 
@@ -78,11 +95,11 @@
 }
 
 .delete-icon::before{
-  transform: rotate(45deg); /* Смещение влево на половину ширины */
+  transform: rotate(45deg);
 }
 
 .delete-icon::after{
-  transform: rotate(-45deg); /* Смещение вверх на половину высоты */
+  transform: rotate(-45deg);
 }
 
 .create-icon::after{
@@ -135,6 +152,8 @@ button.remove-task-button:active,
 }
 
 .button-container {
+  display: flex;
+  align-items: center;
   position: relative;
   margin: 0 4px;
 }
@@ -145,9 +164,12 @@ button.remove-task-button:active,
 }
 
 .numbered {
-  list-style-type: none; /* Убираем стандартные точки */
-  counter-reset: list-counter; /* Инициализация счетчика */
+  list-style-type: none;
+  counter-reset: list-counter;
   padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .main-task-button{
@@ -168,4 +190,35 @@ button.remove-task-button:active,
 
 .suggest-task-button{
   margin-left: 30px;
+}
+
+.app-container__buttons-wrapper{
+  display: flex;
+
+  & .delete-tasks-button{
+    background-color: $cancel-selected-task-button;
+
+    &.hidden{
+      display: none;
+    }
+
+    &:hover{
+      background-color: $cancel-selected-task-button_hover;
+    }
+
+    &:active{
+      background-color: $cancel-selected-task-button_active;
+    }
+  }
+}
+
+button{
+  transition: all 0.3s ease;
+  border: 0;
+  cursor: pointer;
+}
+
+ul{
+  list-style: none;
+  padding: 0;
 }
